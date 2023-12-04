@@ -1,13 +1,11 @@
-// ==========================================================================
-//
-// Software written by Boguslaw Cyganek (C) to be used with the book:
-// INTRODUCTION TO PROGRAMMING WITH C++ FOR ENGINEERS
-// Published by Wiley, 2020
-//
-// The software is supplied as is and for educational purposes
-// without any guarantees nor responsibility of its use in any application. 
-//
-// ==========================================================================
+/*
+-------------------------------------
+|	Software written by Cristian Niwelt (C)
+|
+|	The software is supplied as is and for educational purposes
+|	without any guarantees nor responsibility of its use in any application.
+-------------------------------------
+*/
 
 
 #include <math.h>
@@ -17,7 +15,7 @@
 
 void GUI::createWindow() {
 	SDL_Init(SDL_INIT_EVERYTHING);
-	mainWindow = SDL_CreateWindow("SDL2 with OpenGL Demo", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL);
+	mainWindow = SDL_CreateWindow("Particle Simulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL);
 	mainRenderer = SDL_CreateRenderer(mainWindow, -1, SDL_RENDERER_ACCELERATED);
 	SDL_GL_CreateContext(mainWindow);
 	SDL_GL_SetSwapInterval(1);	//VSYNC
@@ -44,12 +42,18 @@ void GUI::removeWindow() {
 	SDL_Quit();
 }
 
+void GUI::displayParticleVector(const PV& pv) {
+	for (const auto& p : pv) {
+		
+	}
+}
+
 void GUI::run() {
 	bool running{ true };
-	while (running)
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	while(running)
 	{
-		while (SDL_PollEvent(&evt))
-		{
+		while ( SDL_PollEvent(&evt) ) {
 			switch (evt.type)
 			{
 			case SDL_QUIT:
@@ -83,11 +87,10 @@ void GUI::run() {
 				break;
 			}
 		}
-
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glLoadIdentity();
+		/*glLoadIdentity();
 		glTranslatef(400.0f, 300.0f, 0.0f);
 		glColor3f(1.0f, 1.0f, 1.0f);
 
@@ -96,10 +99,15 @@ void GUI::run() {
 		glVertex2f(100.0f, 100.0f);
 		glVertex2f(100.0f, -100.0f);
 		glVertex2f(-100.0f, -100.0f);
-		glEnd();
+		glEnd();*/
+
+		physicsEngine.runPhysicsIteration();
+		displayParticleVector(physicsEngine.getParticles());
 
 		SDL_GL_SwapWindow(mainWindow);
-		SDL_Color red = {255, 0, 0, 255};
+		//SDL_Color red = {255, 0, 0, 255};
 		//SDL_Delay(10);
 	}
 }
+
+//TODO: functions to change window space to world space & viceversa, maybe SDL provides?

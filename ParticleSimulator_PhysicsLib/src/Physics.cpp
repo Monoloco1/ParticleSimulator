@@ -45,7 +45,7 @@ Particle Physics::getParticles(int index) {
 |			distances in X,Y dims between centers(change referenced D's)
 */
 bool Physics::collisionDetect(Particle& p1, Particle& p2, D& offsetX, D& offsetY) {
-	if( p1.getPos().x - p1.)
+	//if( p1.getPos().x - p1.)
 	return false;
 }
 
