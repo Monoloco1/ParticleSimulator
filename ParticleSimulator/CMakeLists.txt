@@ -31,8 +31,8 @@ endif()
 include_directories( ../ParticleSimulator_PhysicsLib/include )
 include_directories( ./include )
 #include_directories( ../../SDL2/include )
-include_directories( ../../FLTK )
-include_directories( ../../FLTK/FL )
+#include_directories( ../../FLTK )
+#include_directories( ../../FLTK/FL )
 
 
 
@@ -72,15 +72,15 @@ find_library( 	PARTICLE_SIMULATOR_PHYSICS_LIB
 					../ParticleSimulator_PhysicsLib/build_mac/Debug )
 
 # FLTK libraries
-find_library( 	FLTK_LIBRARY
-		NAMES 			fltkd fltk
-		PATHS 			../FLTK/lib/Debug 	../FLTK/lib/Release 	../FLTK/lib )
+#find_library( 	FLTK_LIBRARY
+#		NAMES 			fltkd fltk
+#		PATHS 			../FLTK/lib/Debug 	../FLTK/lib/Release 	../FLTK/lib )
 
 
 target_link_libraries( 	${PROJECT_NAME} 
 			PUBLIC 
 				${PARTICLE_SIMULATOR_PHYSICS_LIB} 
-				${FLTK_LIBRARY} 
+				#${FLTK_LIBRARY} 
 		)
 
 
