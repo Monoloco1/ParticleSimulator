@@ -44,6 +44,10 @@ Particle Physics::getParticles(int index) {
 |	OUTPUT: boolean true if they collide
 |			distances in X,Y dims between centers(change referenced D's)
 */
+void Physics::collisionReaction(Particle& p1, Particle& p2, D& offsetX, D& offsetY) {
+	p1.setColor(prt::Red);
+	p2.setColor(prt::Red);
+}
 bool Physics::collisionDetect(Particle& p1, Particle& p2, D& offsetX, D& offsetY) {
 	//if( p1.getPos().x - p1.)
 	return false;
@@ -51,7 +55,15 @@ bool Physics::collisionDetect(Particle& p1, Particle& p2, D& offsetX, D& offsetY
 
 void Physics::runPhysicsIteration() {
 	D offX{}, offY{};
-	for (auto it1 = particles.begin(); it1 != particles.end() - 1; ++it1) {
+
+	for (unsigned i1{ 0 }; i1 < particles.size() - 1; ++i1) {
+		for (unsigned i2{ i1+1 }; i2 < particles.size() ; ++i2) {
+			if (collisionDetect(particles[i1], particles[i2], offX, offY)) {
+				
+			}
+		}
+	}
+	/*for (auto it1 = particles.begin(); it1 != particles.end() - 1; ++it1) {
 		for (auto it2 = it1 + 1; it2 != particles.end(); ++it2) {
 			if (collisionDetect(*it1, *it2, offX, offY)) {
 				it1->setColor(prt::Red);
@@ -62,7 +74,7 @@ void Physics::runPhysicsIteration() {
 				it2->setColor(prt::White);
 			}
 		}
-	}
+	}*/
 }
 
 /*	removeParticles( index ), removeParticles(int startIndex, int length)

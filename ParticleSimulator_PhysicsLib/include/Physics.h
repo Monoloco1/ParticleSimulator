@@ -32,6 +32,7 @@ public:
 	PV getParticles();
 	Particle getParticles(int index);
 
+	void collisionReaction(Particle& p1, Particle& p2, D& offsetX, D& offsetY);
 	bool collisionDetect(Particle& p1, Particle& p2, D& offsetX, D& offsetY);
 	void runPhysicsIteration();
 	
