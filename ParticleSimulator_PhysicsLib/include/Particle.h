@@ -63,8 +63,10 @@ public:
 	void setPos(DP& newPos);
 	DP getVel();
 	void setVel(DP& newVel);
-	void setColor(prt::Color newColor);
+	void setColor(prt::Color newCol);
 	prt::Color getColor();
+	void setShape(DPV& newShape);
+	DPV getShape();
 
 	
 	Particle() = default;	// moze do particle.cpp?

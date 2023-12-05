@@ -38,6 +38,14 @@ prt::Color Particle::getColor() {
 Particle::Particle(const DP& pos, const DP& vel, const D& mass, const prt::Color& col, const BB& bb, const DPV& shape) :
 	pos(pos), vel(vel), mass(mass), col(col), bb(bb), shape(shape) {}
 
+void Particle::setShape(DPV& newShape) {
+	shape = newShape;
+}
+
+DPV Particle::getShape() {
+	return shape;
+}
+
 Particle::Particle(const DP& pos) : pos(pos) {
 	vel = { 0.0, 0.0 };
 	mass = 1.1;
