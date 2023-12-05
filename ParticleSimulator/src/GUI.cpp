@@ -49,11 +49,11 @@ void GUI::displayParticleVector(PV& pv) {
 		glLoadIdentity();
 		glTranslated(p.getPos().x, p.getPos().y, 0.0);	//set pos on screen(later by perspective)
 
-		/*glColor4ui((const GLuint)p.getColor().str.r,	//set displayed particle color
-					(const GLuint)p.getColor().str.g,
-					(const GLuint)p.getColor().str.b,
-					(const GLuint)p.getColor().str.a); */
-		glColor4ub(255, 0, 0, 255);
+		glColor4ub(	(const GLubyte)p.getColor().str.r,	//set displayed particle color
+					(const GLubyte)p.getColor().str.g,
+					(const GLubyte)p.getColor().str.b,
+					(const GLubyte)p.getColor().str.a);
+		//glColor4ub(255, 0, 0, 255);
 
 		glBegin(GL_POLYGON);							//draw Particle vertexes
 		glVertex2f(-10.0f, 10.0f);						//temporarily just boxes
