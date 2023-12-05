@@ -20,6 +20,10 @@ struct DP {			//	Data Pair
 	D x{};
 	D y{};
 };
+DP operator+ (const DP& dp1, const DP& dp2);
+DP operator* (const DP& dp, const D& mult);
+DP operator-(const DP& dp1, const DP& dp2);
+
 using DPV = vector<DP>;	//	Data Pair Vector
 
 struct BB {			// Bounding Box

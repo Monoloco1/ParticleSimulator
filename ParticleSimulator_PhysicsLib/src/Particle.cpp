@@ -64,3 +64,18 @@ Particle::Particle(const DP& pos) : pos(pos) {
 }
 
 Particle::~Particle() {}
+
+DP operator+(const DP& dp1, const DP& dp2) {
+	DP summed{ dp1.x + dp2.x, dp1.y + dp2.y };
+	return summed;
+}
+
+DP operator-(const DP& dp1, const DP& dp2) {
+	DP summed{ dp1.x - dp2.x, dp1.y - dp2.y };
+	return summed;
+}
+
+DP operator*(const DP& dp, const D& mult) {
+	DP multiplied{ dp.x * mult, dp.y * mult };
+	return multiplied;
+}
