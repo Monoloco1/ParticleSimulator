@@ -28,11 +28,12 @@ DP GUI::camera::window2World(const DP& dp) {
 D GUI::camera::getZoom() {
 	return zoom;
 }
-void GUI::camera::setZoom(D& newZoom) {
+void GUI::camera::setZoom(const D& newZoom) {
 	zoom = newZoom;
 }
-D GUI::camera::multiplyZoom(D& multiplier) {
+D GUI::camera::multiplyZoom(const D& multiplier) {
 	zoom *= multiplier;
+	return zoom;
 }
 
 void GUI::createWindow() {
@@ -95,9 +96,13 @@ void GUI::run() {
 
 	struct {
 		DP pos;	//mouse position DP
-		bool lClick{}, rClick{};
+		bool lClick{}, rClick{}, scrolled{};
+		int scrollX{};			//wheel scroll, positive for right
+		int scrollY{};			//wheel scroll, positive for up
 	} mouse;
+
 	Particle testPart;
+
 	while(running)
 	{
 		while ( SDL_PollEvent(&evt) ) {
@@ -120,6 +125,18 @@ void GUI::run() {
 					break;
 				default:
 					
+					break;
+				}
+				break;
+			case SDL_MOUSEWHEEL:
+				switch (evt.wheel.type) {
+				case SDL_MOUSEWHEEL:
+					mouse.scrolled = true;
+					mouse.scrollX = evt.wheel.x;
+					mouse.scrollY = evt.wheel.y;
+					break;
+
+				default:
 					break;
 				}
 				break;
@@ -158,6 +175,9 @@ void GUI::run() {
 
 
 		//physicsEngine.runPhysicsIteration();
+		if (mouse.scrolled) {
+			camera.multiplyZoom( mouse.scrollY>0? 2.0 : 0.5 );
+		}
 		if (mouse.lClick) {
 			testPart = Particle(mouse.pos);
 			physicsEngine.addParticle(
@@ -171,6 +191,7 @@ void GUI::run() {
 
 		mouse.lClick = false;
 		mouse.rClick = false;
+		mouse.scrolled = false;
 		//SDL_Color red = {255, 0, 0, 255};
 		//SDL_Delay(10);
 	}

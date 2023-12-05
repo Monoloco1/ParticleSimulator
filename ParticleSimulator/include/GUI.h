@@ -40,8 +40,8 @@ private:
 		DP window2World(const DP& dp);
 
 		D getZoom();
-		void setZoom(D& newZoom);
-		D multiplyZoom(D& multiplier);
+		void setZoom(const D& newZoom);
+		D multiplyZoom(const D& multiplier);
 
 	} camera;
 
