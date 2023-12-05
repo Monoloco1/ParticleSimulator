@@ -30,7 +30,7 @@ private:
 
 public:
 	void createWindow();
-	void displayParticleVector(const PV& pv);
+	void displayParticleVector(PV& pv);	//const ?
 	void run();
 	void removeWindow();
 };

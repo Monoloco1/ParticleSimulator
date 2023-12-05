@@ -9,8 +9,8 @@
 
 
 #include <math.h>
-#include <SDL.h>
-#include <SDL_opengl.h>
+//#include <SDL.h>
+//#include <SDL_opengl.h>
 #include "GUI.h"
 
 void GUI::createWindow() {
@@ -42,9 +42,23 @@ void GUI::removeWindow() {
 	SDL_Quit();
 }
 
-void GUI::displayParticleVector(const PV& pv) {
-	for (const auto& p : pv) {
-		
+void GUI::displayParticleVector(PV& pv) {
+	glLoadIdentity();
+	
+	for (auto& p : pv) {
+		glTranslated(p.getPos().x, p.getPos().y, 0.0);	//set pos on screen(later by perspective)
+
+		glColor4ui( (const GLuint)p.getColor().str.r,	//set displayed particle color
+					(const GLuint)p.getColor().str.g,
+					(const GLuint)p.getColor().str.b,
+					(const GLuint)p.getColor().str.a);
+
+		glBegin(GL_POLYGON);							//draw Particle vertexes
+		glVertex2f(-10.0f, 10.0f);						//temporarily just boxes
+		glVertex2f(10.0f, 10.0f);
+		glVertex2f(10.0f, -10.0f);
+		glVertex2f(-10.0f, -10.0f);
+		glEnd();
 	}
 }
 
@@ -90,18 +104,10 @@ void GUI::run() {
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		/*glLoadIdentity();
-		glTranslatef(400.0f, 300.0f, 0.0f);
-		glColor3f(1.0f, 1.0f, 1.0f);
+		
 
-		glBegin(GL_POLYGON);
-		glVertex2f(-100.0f, 100.0f);
-		glVertex2f(100.0f, 100.0f);
-		glVertex2f(100.0f, -100.0f);
-		glVertex2f(-100.0f, -100.0f);
-		glEnd();*/
 
-		physicsEngine.runPhysicsIteration();
+		//physicsEngine.runPhysicsIteration();
 		displayParticleVector(physicsEngine.getParticles());
 
 		SDL_GL_SwapWindow(mainWindow);
