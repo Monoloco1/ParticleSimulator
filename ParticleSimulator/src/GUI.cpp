@@ -43,15 +43,17 @@ void GUI::removeWindow() {
 }
 
 void GUI::displayParticleVector(PV& pv) {
-	glLoadIdentity();
+	
 	
 	for (auto& p : pv) {
+		glLoadIdentity();
 		glTranslated(p.getPos().x, p.getPos().y, 0.0);	//set pos on screen(later by perspective)
 
-		glColor4ui( (const GLuint)p.getColor().str.r,	//set displayed particle color
+		/*glColor4ui((const GLuint)p.getColor().str.r,	//set displayed particle color
 					(const GLuint)p.getColor().str.g,
 					(const GLuint)p.getColor().str.b,
-					(const GLuint)p.getColor().str.a);
+					(const GLuint)p.getColor().str.a); */
+		glColor4ub(255, 0, 0, 255);
 
 		glBegin(GL_POLYGON);							//draw Particle vertexes
 		glVertex2f(-10.0f, 10.0f);						//temporarily just boxes
@@ -65,10 +67,12 @@ void GUI::displayParticleVector(PV& pv) {
 void GUI::run() {
 	bool running{ true };
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
 	struct {
 		DP pos;	//mouse position DP
 		bool lClick{}, rClick{};
-	}mouse;
+	} mouse;
+	Particle testPart;
 	while(running)
 	{
 		while ( SDL_PollEvent(&evt) ) {
@@ -129,6 +133,12 @@ void GUI::run() {
 
 
 		//physicsEngine.runPhysicsIteration();
+		if (mouse.lClick) {
+			testPart = Particle(mouse.pos, { 0.0, 0.0 }, 1, prt::Red, { 10.0, -10.0, -10.0, 10.0 });
+			physicsEngine.addParticle(
+				testPart
+			);
+		};
 		displayParticleVector(physicsEngine.getParticles());
 
 		SDL_GL_SwapWindow(mainWindow);
