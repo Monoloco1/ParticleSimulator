@@ -71,6 +71,6 @@ public:
 	
 	Particle() = default;	// moze do particle.cpp?
 	Particle(const DP& pos, const DP& vel, const D& mass, const prt::Color& col, const BB& bb, const DPV& shape);
-	Particle(const DP& pos); //Initialisator for default Particles
+	Particle(const DP& pos); //Constructor for default Particles
 	~Particle();
 };
