@@ -30,6 +30,10 @@ void Particle::setColor(prt::Color newCol) {
 	col = newCol;
 }
 
+prt::Color Particle::getColor() {
+	return col;
+}
+
 
 Particle::Particle(const DP& pos, const DP& vel, const D& mass, const prt::Color& col, const BB& bb) :
 	pos(pos), vel(vel), mass(mass), col(col), bb(bb) {}

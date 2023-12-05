@@ -59,7 +59,7 @@ void Physics::runPhysicsIteration() {
 	for (unsigned i1{ 0 }; i1 < particles.size() - 1; ++i1) {
 		for (unsigned i2{ i1+1 }; i2 < particles.size() ; ++i2) {
 			if (collisionDetect(particles[i1], particles[i2], offX, offY)) {
-				
+				collisionReaction(particles[i1], particles[i2], offX, offY);
 			}
 		}
 	}

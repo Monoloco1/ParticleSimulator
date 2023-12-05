@@ -60,6 +60,7 @@ public:
 	DP getVel();
 	void setVel(DP& newVel);
 	void setColor(prt::Color newColor);
+	prt::Color getColor();
 
 	
 	Particle() = default;	// moze do particle.cpp?
