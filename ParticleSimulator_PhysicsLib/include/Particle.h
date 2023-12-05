@@ -10,14 +10,18 @@
 
 #pragma once
 #include <iostream>
+#include <vector>
+using std::vector;
 
 using D = double;	//	Data
 
 
-struct DP {			//	DataPair
+struct DP {			//	Data Pair
 	D x{};
 	D y{};
 };
+using DPV = vector<DP>;	//	Data Pair Vector
+
 struct BB {			// Bounding Box
 	D n{};	//North
 	D s{};	//South
@@ -47,12 +51,12 @@ namespace prt {	//	Particle namespace
 
 class Particle {
 protected:
-	DP pos;		//position DP, already initialized
-	DP vel;		//velocity DP
-	BB bb;		//bounding box BB
+	DP pos;				//position DP, already initialized
+	DP vel;				//velocity DP
+	BB bb;				//bounding box BB
+	DPV shape;			//DPV representing Particle shape
 	D mass{};
 	prt::Color col{ {255, 255, 255, 255} };
-	//shape
 
 public:
 	DP getPos();
@@ -64,6 +68,7 @@ public:
 
 	
 	Particle() = default;	// moze do particle.cpp?
-	Particle(const DP& pos, const DP& vel, const D& mass, const prt::Color& col, const BB& bb);
+	Particle(const DP& pos, const DP& vel, const D& mass, const prt::Color& col, const BB& bb, const DPV& shape);
+	Particle(const DP& pos); //Initialisator for default Particles
 	~Particle();
 };
