@@ -13,6 +13,18 @@
 //#include <SDL_opengl.h>
 #include "GUI.h"
 
+void GUI::camera::init(SDL_Window* window) {
+	window = window;
+}
+
+DP GUI::camera::world2Window(const DP& dp) {
+	return ( dp + pos ) * zoom;
+}
+
+DP GUI::camera::window2World(const DP& dp) {
+	return dp*(1/zoom)-pos;
+}
+
 void GUI::createWindow() {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	mainWindow = SDL_CreateWindow("Particle Simulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL);
@@ -34,6 +46,8 @@ void GUI::createWindow() {
 	glOrtho(0, 800, 600, 0, 0, 1000);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+	camera.init(mainWindow);
 }
 
 void GUI::removeWindow() {
@@ -45,7 +59,10 @@ void GUI::removeWindow() {
 void GUI::displayParticleVector(PV& pv) {
 	for (auto& p : pv) {
 		glLoadIdentity();
-		glTranslated(p.getPos().x, p.getPos().y, 0.0);	//set pos on screen(later by perspective)
+		glTranslated(
+			camera.world2Window(p.getPos()).x,
+			camera.world2Window(p.getPos()).y,
+			0.0);
 
 		glColor4ub(	(const GLubyte)p.getColor().str.r,	//set displayed particle color
 					(const GLubyte)p.getColor().str.g,
@@ -54,7 +71,9 @@ void GUI::displayParticleVector(PV& pv) {
 
 		glBegin(GL_POLYGON);							//draw Particle vertexes
 		for (auto& v : p.getShape()) {
-			glVertex2d(v.x, v.y);
+			glVertex2d(
+				camera.world2Window(v).x,
+				camera.world2Window(v).y);
 		}
 		glEnd();
 	}

@@ -26,6 +26,21 @@ private:
 	SDL_Renderer* mainRenderer{};
 	SDL_Event evt{};
 
+	class camera {
+	private:
+		SDL_Window* window{};
+		DP pos;		//camera center position in the world
+		D zoom{1};	//zoom/magnification the camera has on the world
+					//maybe keep also 1/zoom variable?? for optimalisation
+
+
+	public:
+		void init(SDL_Window* window);
+		DP world2Window(const DP& dp);
+		DP window2World(const DP& dp);
+
+	} camera;
+
 	Physics physicsEngine;
 
 public:
