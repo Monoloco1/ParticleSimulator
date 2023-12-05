@@ -65,6 +65,10 @@ void GUI::displayParticleVector(PV& pv) {
 void GUI::run() {
 	bool running{ true };
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	struct {
+		DP pos;	//mouse position DP
+		bool lClick{}, rClick{};
+	}mouse;
 	while(running)
 	{
 		while ( SDL_PollEvent(&evt) ) {
@@ -72,6 +76,23 @@ void GUI::run() {
 			{
 			case SDL_QUIT:
 				running = false;
+				break;
+			case SDL_MOUSEMOTION:
+				mouse.pos.x = (D)evt.motion.x;
+				mouse.pos.y = (D)evt.motion.y;
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+				switch (evt.button.button) {
+				case SDL_BUTTON_LEFT:
+					mouse.lClick = true;
+					break;
+				case SDL_BUTTON_RIGHT:
+					mouse.rClick = true;
+					break;
+				default:
+					
+					break;
+				}
 				break;
 			case SDL_KEYDOWN:
 				switch (evt.key.keysym.sym)
@@ -111,6 +132,10 @@ void GUI::run() {
 		displayParticleVector(physicsEngine.getParticles());
 
 		SDL_GL_SwapWindow(mainWindow);
+
+
+		mouse.lClick = false;
+		mouse.rClick = false;
 		//SDL_Color red = {255, 0, 0, 255};
 		//SDL_Delay(10);
 	}
