@@ -43,8 +43,6 @@ void GUI::removeWindow() {
 }
 
 void GUI::displayParticleVector(PV& pv) {
-	
-	
 	for (auto& p : pv) {
 		glLoadIdentity();
 		glTranslated(p.getPos().x, p.getPos().y, 0.0);	//set pos on screen(later by perspective)
@@ -53,13 +51,11 @@ void GUI::displayParticleVector(PV& pv) {
 					(const GLubyte)p.getColor().str.g,
 					(const GLubyte)p.getColor().str.b,
 					(const GLubyte)p.getColor().str.a);
-		//glColor4ub(255, 0, 0, 255);
 
 		glBegin(GL_POLYGON);							//draw Particle vertexes
-		glVertex2f(-10.0f, 10.0f);						//temporarily just boxes
-		glVertex2f(10.0f, 10.0f);
-		glVertex2f(10.0f, -10.0f);
-		glVertex2f(-10.0f, -10.0f);
+		for (auto& v : p.getShape()) {
+			glVertex2d(v.x, v.y);
+		}
 		glEnd();
 	}
 }
@@ -134,7 +130,7 @@ void GUI::run() {
 
 		//physicsEngine.runPhysicsIteration();
 		if (mouse.lClick) {
-			testPart = Particle(mouse.pos, { 0.0, 0.0 }, 1, prt::Red, { 10.0, -10.0, -10.0, 10.0 });
+			testPart = Particle(mouse.pos);
 			physicsEngine.addParticle(
 				testPart
 			);
