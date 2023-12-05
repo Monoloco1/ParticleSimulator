@@ -25,6 +25,16 @@ DP GUI::camera::window2World(const DP& dp) {
 	return dp*(1/zoom)-pos;
 }
 
+D GUI::camera::getZoom() {
+	return zoom;
+}
+void GUI::camera::setZoom(D& newZoom) {
+	zoom = newZoom;
+}
+D GUI::camera::multiplyZoom(D& multiplier) {
+	zoom *= multiplier;
+}
+
 void GUI::createWindow() {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	mainWindow = SDL_CreateWindow("Particle Simulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL);

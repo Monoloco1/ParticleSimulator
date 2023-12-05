@@ -39,6 +39,10 @@ private:
 		DP world2Window(const DP& dp);
 		DP window2World(const DP& dp);
 
+		D getZoom();
+		void setZoom(D& newZoom);
+		D multiplyZoom(D& multiplier);
+
 	} camera;
 
 	Physics physicsEngine;
