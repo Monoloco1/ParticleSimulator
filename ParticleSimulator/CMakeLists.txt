@@ -30,11 +30,10 @@ endif()
 # Inform CMake where the header files are
 include_directories( ../ParticleSimulator_PhysicsLib/include )
 include_directories( ./include )
-#include_directories( ../../SDL2/include )
-#include_directories( ../../FLTK )
-#include_directories( ../../FLTK/FL )
+include_directories( ../SDL2/include )
 
-
+link_directories( ../SDL/lib/Debug )
+link_directories( ../SDL/lib/Release )
 
 # Automatically add all *.cpp files to the project
 file ( GLOB SOURCES "./src/*.cpp" )
@@ -51,8 +50,8 @@ if( WIN32 )
 
 	target_link_libraries( 	${PROJECT_NAME} 
 				PUBLIC 
-					wsock32 #potrzebne?? sieciowe sprawy
-					comctl32
+					#wsock32 #potrzebne?? sieciowe sprawy
+					#comctl32
 			)
 
 elseif( ${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
@@ -71,19 +70,16 @@ find_library( 	PARTICLE_SIMULATOR_PHYSICS_LIB
 					../ParticleSimulator_PhysicsLib/build_linux/Debug
 					../ParticleSimulator_PhysicsLib/build_mac/Debug )
 
-# FLTK libraries
-#find_library( 	FLTK_LIBRARY
-#		NAMES 			fltkd fltk
-#		PATHS 			../FLTK/lib/Debug 	../FLTK/lib/Release 	../FLTK/lib )
+find_package(OpenGL)
 
 
 target_link_libraries( 	${PROJECT_NAME} 
 			PUBLIC 
-				${PARTICLE_SIMULATOR_PHYSICS_LIB} 
-				#${FLTK_LIBRARY} 
+				${PARTICLE_SIMULATOR_PHYSICS_LIB}
+				${CMAKE_SOURCE_DIR}/../SDL2/lib/Debug/SDL2.lib
+				${CMAKE_SOURCE_DIR}/../SDL2/lib/Debug/SDL2main.lib
+				${OPENGL_gl_LIBRARY}
 		)
-
-
 
 # Set the default project 
 set_property( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME} )
