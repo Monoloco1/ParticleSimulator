@@ -10,12 +10,21 @@
 
 #pragma once		// include this header in the translation unit only once
 
+
+
+#include "imgui.h"
+#include "../imgui/backends/imgui_impl_sdl2.h"
+#include "../imgui/backends/imgui_impl_opengl2.h"
+//#include "imgui_demo.cpp"
+
 #include <iostream>
 #include <string>
 #include <cassert>
 
 #include <SDL.h>
 #include <SDL_opengl.h>
+
+
 
 #include "../../ParticleSimulator_PhysicsLib/include/Physics.h"
 

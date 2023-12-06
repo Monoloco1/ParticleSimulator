@@ -76,7 +76,7 @@ void GUI::createWindow() {
 		(int)camera.getWindowSize().y,
 		SDL_WINDOW_OPENGL );
 	mainRenderer = SDL_CreateRenderer(mainWindow, -1, SDL_RENDERER_ACCELERATED);
-	SDL_GL_CreateContext(mainWindow);
+	SDL_GLContext glContext = SDL_GL_CreateContext(mainWindow);
 
 	SDL_GL_SetSwapInterval(1);	//VSYNC
 
@@ -95,13 +95,29 @@ void GUI::createWindow() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
+
+	// Setup Platform/Renderer backends
+	ImGui_ImplSDL2_InitForOpenGL(mainWindow, glContext);
+	ImGui_ImplOpenGL2_Init();
+
 	//camera.init(mainWindow);
 }
 
 void GUI::removeWindow() {
+	ImGui_ImplOpenGL2_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
 	SDL_DestroyRenderer(mainRenderer);
 	SDL_DestroyWindow(mainWindow);
 	SDL_Quit();
+
 }
 
 void GUI::displayParticle(Particle& p) {
@@ -144,6 +160,8 @@ void GUI::run() {
 	while(running)
 	{
 		while ( SDL_PollEvent(&evt) ) {
+			// (Where your code calls SDL_PollEvent())
+			ImGui_ImplSDL2_ProcessEvent(&evt); // Forward your event to backend
 			switch (evt.type)
 			{
 			case SDL_QUIT:
@@ -211,6 +229,12 @@ void GUI::run() {
 			}
 		}
 		
+		// (After event loop)
+		// Start the Dear ImGui frame
+		ImGui_ImplOpenGL2_NewFrame();
+		ImGui_ImplSDL2_NewFrame();
+		ImGui::NewFrame();
+		ImGui::ShowDemoWindow(); // Show demo window! :)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//physicsEngine.runPhysicsIteration();
@@ -244,6 +268,11 @@ void GUI::run() {
 		
 
 		SDL_GL_SwapWindow(mainWindow);
+		// Rendering
+		// (Your code clears your framebuffer, renders your other stuff etc.)
+		ImGui::Render();
+		ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+		// (Your code calls SDL_GL_SwapWindow() etc.)
 
 		mouse.lClick = false;
 		mouse.rClick = false;
