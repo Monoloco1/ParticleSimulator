@@ -25,23 +25,31 @@ private:
 	SDL_Window* mainWindow{};
 	SDL_Renderer* mainRenderer{};
 	SDL_Event evt{};
+	
 
 	class camera {
 	private:
-		SDL_Window* window{};
+		//SDL_Window* window{};
 		DP pos;		//camera center position in the world
 		D zoom{1};	//zoom/magnification the camera has on the world
-					//maybe keep also 1/zoom variable?? for optimalisation
-
+		DP windowSize{};
 
 	public:
 		void init(SDL_Window* window);
 		DP world2Window(const DP& dp);
 		DP window2World(const DP& dp);
 
+		DP getPos();
+		void setPos(const DP& newPos);
 		D getZoom();
 		void setZoom(const D& newZoom);
+		DP getWindowSize();
+		void setWindowSize(const DP& newWindowSize);
+
 		D multiplyZoom(const D& multiplier);
+
+		void moveProportional(const DP & XY);
+		void changePerspective(const D& multiplier, const DP& axis);
 
 	} camera;
 
