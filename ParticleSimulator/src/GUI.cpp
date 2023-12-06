@@ -58,7 +58,9 @@ void GUI::camera::moveProportional(const DP& XY) {
 }
 
 void GUI::camera::changePerspective(const D& multiplier, const DP& dp) {
-	// / 2.0 / zoom / multiplier * (multiplier >= 1 ? 1.0 : -1.0);
+	//pos = pos + windowSize / 20.0 / zoom / multiplier * (multiplier >= 1.0 ? 1.0 : -1.0);
+	DP scaleFactor = { windowSize.x * (dp.x/windowSize.x*2.0), windowSize.y * (dp.y / windowSize.y * 2.0) };
+	pos = pos + scaleFactor / 20.0 / zoom / multiplier * (multiplier >= 1.0 ? 1.0 : -1.0);
 	zoom *= multiplier;
 	
 	// TODO: zoom to a point on the screen
@@ -229,7 +231,7 @@ void GUI::run() {
 
 		//physicsEngine.runPhysicsIteration();
 		if (mouse.scrolled) {
-			camera.changePerspective( mouse.scrollY>0? 2.0 : .5, mouse.pos );
+			camera.changePerspective( mouse.scrollY>0? 1.1 : .9, mouse.pos );
 		}
 		if (mouse.lClick) {
 			testPart = Particle(camera.window2World(mouse.pos));
@@ -239,16 +241,23 @@ void GUI::run() {
 		};
 		displayParticleVector(physicsEngine.getParticles());
 
-		/*glLoadIdentity();
-		glTranslatef(400.0f, 300.0f, 0.0f);
-		glColor3f(1.0f, 1.0f, 1.0f);
+		//glLoadIdentity();
+		////glTranslatef(400.0f, 300.0f, 0.0f);
 
-		glBegin(GL_POLYGON);
+		//glColor3f(1.0f, 1.0f, 1.0f);
+		//glLineWidth(2.0);
+		//glBegin(GL_LINES);	//debugging crossing lines
+		//	glVertex2d(0.0, 0.0);
+		//	glVertex2d(camera.getWindowSize().x, camera.getWindowSize().y);
+		//	glVertex2d(0.0, camera.getWindowSize().y);
+		//	glVertex2d(camera.getWindowSize().x, 0.0);
+		//glEnd();
+		/*glBegin(GL_POLYGON);
 		glVertex2f(-100.0f, 100.0f);
 		glVertex2f(100.0f, 100.0f);
 		glVertex2f(100.0f, -100.0f);
-		glVertex2f(-100.0f, 0.0f);
-		glEnd();*/
+		glVertex2f(-100.0f, 0.0f);*/
+		
 
 		SDL_GL_SwapWindow(mainWindow);
 
