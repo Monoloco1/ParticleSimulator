@@ -20,13 +20,13 @@ void GUI::camera::init(SDL_Window* window) {
 }
 
 DP GUI::camera::world2Window(const DP& dp) {
-	//return ( dp - pos ) / zoom;
-	return dp * zoom - pos;
+	return ( dp - pos ) * zoom;
+	//return dp * zoom - pos;
 }
 
 DP GUI::camera::window2World(const DP& dp) {
-	//return ( dp * zoom + pos ) ;
-	return (dp + pos) / zoom;
+	return ( dp / zoom + pos ) ;
+	//return (dp + pos) / zoom;
 }
 
 DP GUI::camera::getPos() {
@@ -35,7 +35,6 @@ DP GUI::camera::getPos() {
 void GUI::camera::setPos(const DP& newPos) {
 	pos = newPos;
 }
-
 D GUI::camera::getZoom() {
 	return zoom;
 }
@@ -123,19 +122,19 @@ void GUI::displayParticleVector(PV& pv) {
 					(const GLubyte)p.getColor().str.b,
 					(const GLubyte)p.getColor().str.a);
 
+		/*glScaled(camera.getZoom(), camera.getZoom(), camera.getZoom());
 		glTranslated(	camera.world2Window(p.getPos()).x,
 						camera.world2Window(p.getPos()).y,
-						0.0);
-		glScaled(camera.getZoom(), camera.getZoom(), camera.getZoom());
+						0.0);*/
+		
 		
 		
 
 		glBegin(GL_POLYGON);							//draw Particle vertexes
 		for (auto& v : p.getShape()) {
-			//auto vWindow = camera.world2Window(v);
 			glVertex2d(
-				v.x,
-				v.y
+				camera.world2Window(v + p.getPos()).x,
+				camera.world2Window(v + p.getPos()).y
 			);
 		}
 		glEnd();
