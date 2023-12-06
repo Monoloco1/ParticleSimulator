@@ -79,3 +79,8 @@ DP operator*(const DP& dp, const D& mult) {
 	DP multiplied{ dp.x * mult, dp.y * mult };
 	return multiplied;
 }
+
+DP operator/(const DP& dp, const D& div) {
+	DP divided{ dp.x / div, dp.y / div };
+	return divided;
+}

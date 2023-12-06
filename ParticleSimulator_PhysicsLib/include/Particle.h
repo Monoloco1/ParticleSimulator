@@ -22,6 +22,7 @@ struct DP {			//	Data Pair
 };
 DP operator+ (const DP& dp1, const DP& dp2);
 DP operator* (const DP& dp, const D& mult);
+DP operator/ (const DP& dp, const D& div);
 DP operator-(const DP& dp1, const DP& dp2);
 
 using DPV = vector<DP>;	//	Data Pair Vector
