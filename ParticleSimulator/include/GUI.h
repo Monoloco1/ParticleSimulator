@@ -57,6 +57,7 @@ private:
 
 public:
 	void createWindow();
+	void displayParticle(Particle& p);
 	void displayParticleVector(PV& pv);	//const ?
 	void run();
 	void removeWindow();

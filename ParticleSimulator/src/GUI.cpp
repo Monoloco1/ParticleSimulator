@@ -54,16 +54,13 @@ D GUI::camera::multiplyZoom(const D& multiplier) {
 }
 
 void GUI::camera::moveProportional(const DP& XY) {
-	pos = pos + XY / zoom * std::min(windowSize.x, windowSize.y);	//move camera by a fraction of the screen, the same amount for x or y
+	pos = pos + XY / zoom * std::min(windowSize.x, windowSize.y);
 }
 
 void GUI::camera::changePerspective(const D& multiplier, const DP& dp) {
-	//pos = pos + windowSize / 20.0 / zoom / multiplier * (multiplier >= 1.0 ? 1.0 : -1.0);
 	DP scaleFactor = { windowSize.x * (dp.x/windowSize.x*2.0), windowSize.y * (dp.y / windowSize.y * 2.0) };
 	pos = pos + scaleFactor / 20.0 / zoom / multiplier * (multiplier >= 1.0 ? 1.0 : -1.0);
 	zoom *= multiplier;
-	
-	// TODO: zoom to a point on the screen
 }
 
 void GUI::createWindow() {
@@ -107,39 +104,26 @@ void GUI::removeWindow() {
 	SDL_Quit();
 }
 
+void GUI::displayParticle(Particle& p) {
+	glColor4ub((const GLubyte)p.getColor().str.r,
+		(const GLubyte)p.getColor().str.g,
+		(const GLubyte)p.getColor().str.b,
+		(const GLubyte)p.getColor().str.a);
+
+	glBegin(GL_POLYGON);							//draw Particle vertexes
+	for (auto& v : p.getShape()) {
+		glVertex2d(
+			camera.world2Window(v + p.getPos()).x,
+			camera.world2Window(v + p.getPos()).y
+		);
+	}
+	glEnd();
+}
+
 void GUI::displayParticleVector(PV& pv) {
+	glLoadIdentity();
 	for (auto& p : pv) {
-		//down, right increases
-
-		glLoadIdentity();
-		//glTranslated(0, 0, 0);
-		/*glTranslated(
-			camera.world2Window(p.getPos()).x,
-			camera.world2Window(p.getPos()).y,
-			0.0);*/
-		//glScaled(camera.zoom, camera.zoom, camera.zoom);
-
-		glColor4ub(	(const GLubyte)p.getColor().str.r,	//set displayed particle color
-					(const GLubyte)p.getColor().str.g,
-					(const GLubyte)p.getColor().str.b,
-					(const GLubyte)p.getColor().str.a);
-
-		/*glScaled(camera.getZoom(), camera.getZoom(), camera.getZoom());
-		glTranslated(	camera.world2Window(p.getPos()).x,
-						camera.world2Window(p.getPos()).y,
-						0.0);*/
-		
-		
-		
-
-		glBegin(GL_POLYGON);							//draw Particle vertexes
-		for (auto& v : p.getShape()) {
-			glVertex2d(
-				camera.world2Window(v + p.getPos()).x,
-				camera.world2Window(v + p.getPos()).y
-			);
-		}
-		glEnd();
+		displayParticle(p);
 	}
 	
 }
