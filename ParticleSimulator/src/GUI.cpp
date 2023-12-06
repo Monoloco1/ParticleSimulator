@@ -151,8 +151,8 @@ void GUI::run() {
 	struct {
 		DP pos;	//mouse position DP
 		bool lClick{}, rClick{}, scrolled{};
-		int scrollX{};			//wheel scroll, positive for right
-		int scrollY{};			//wheel scroll, positive for up
+		D scrollX{};			//wheel scroll, positive for right
+		D scrollY{};			//wheel scroll, positive for up
 	} mouse;
 
 	Particle testPart;
@@ -160,10 +160,9 @@ void GUI::run() {
 	while(running)
 	{
 		while ( SDL_PollEvent(&evt) ) {
-			// (Where your code calls SDL_PollEvent())
-			ImGui_ImplSDL2_ProcessEvent(&evt); // Forward your event to backend
-			switch (evt.type)
-			{
+			ImGui_ImplSDL2_ProcessEvent(&evt);
+			ImGuiIO& io = ImGui::GetIO();
+			switch (evt.type) {
 			case SDL_QUIT:
 				running = false;
 				break;
@@ -172,29 +171,31 @@ void GUI::run() {
 				mouse.pos.y = (D)evt.motion.y;
 				break;
 			case SDL_MOUSEBUTTONDOWN:
-				switch (evt.button.button) {
-				case SDL_BUTTON_LEFT:
-					mouse.lClick = true;
+				//io.AddMouseButtonEvent(evt.button.button, true);
+				if (!io.WantCaptureMouse)
+					switch (evt.button.button) {
+					case SDL_BUTTON_LEFT:
+						mouse.lClick = true;
+						break;
+					case SDL_BUTTON_RIGHT:
+						mouse.rClick = true;
+						break;
+					default:
 					break;
-				case SDL_BUTTON_RIGHT:
-					mouse.rClick = true;
-					break;
-				default:
-					
-					break;
-				}
+					}
 				break;
 			case SDL_MOUSEWHEEL:
-				switch (evt.wheel.type) {
-				case SDL_MOUSEWHEEL:
-					mouse.scrolled = true;
-					mouse.scrollX = evt.wheel.x;
-					mouse.scrollY = evt.wheel.y;
-					break;
+				if (!io.WantCaptureMouse)
+					switch (evt.wheel.type) {
+					case SDL_MOUSEWHEEL:
+						mouse.scrolled = true;
+						mouse.scrollX = evt.wheel.x;
+						mouse.scrollY = evt.wheel.y;
+						break;
 
-				default:
-					break;
-				}
+					default:
+						break;
+					}
 				break;
 			case SDL_KEYDOWN:
 				switch (evt.key.keysym.sym)
@@ -227,9 +228,9 @@ void GUI::run() {
 				}
 				break;
 			}
+			
 		}
 		
-		// (After event loop)
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL2_NewFrame();
 		ImGui_ImplSDL2_NewFrame();
@@ -249,30 +250,12 @@ void GUI::run() {
 		};
 		displayParticleVector(physicsEngine.getParticles());
 
-		//glLoadIdentity();
-		////glTranslatef(400.0f, 300.0f, 0.0f);
-
-		//glColor3f(1.0f, 1.0f, 1.0f);
-		//glLineWidth(2.0);
-		//glBegin(GL_LINES);	//debugging crossing lines
-		//	glVertex2d(0.0, 0.0);
-		//	glVertex2d(camera.getWindowSize().x, camera.getWindowSize().y);
-		//	glVertex2d(0.0, camera.getWindowSize().y);
-		//	glVertex2d(camera.getWindowSize().x, 0.0);
-		//glEnd();
-		/*glBegin(GL_POLYGON);
-		glVertex2f(-100.0f, 100.0f);
-		glVertex2f(100.0f, 100.0f);
-		glVertex2f(100.0f, -100.0f);
-		glVertex2f(-100.0f, 0.0f);*/
-		
-
-		SDL_GL_SwapWindow(mainWindow);
-		// Rendering
-		// (Your code clears your framebuffer, renders your other stuff etc.)
+		//	draw the imGUI
 		ImGui::Render();
 		ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
-		// (Your code calls SDL_GL_SwapWindow() etc.)
+
+		//	draw the openGL content
+		SDL_GL_SwapWindow(mainWindow);
 
 		mouse.lClick = false;
 		mouse.rClick = false;
