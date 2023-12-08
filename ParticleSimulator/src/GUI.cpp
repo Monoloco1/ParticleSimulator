@@ -1,4 +1,4 @@
-/*
+﻿/*
 -------------------------------------
 |	Software written by Cristian Niwelt (C)
 |
@@ -7,11 +7,12 @@
 -------------------------------------
 */
 
+#define DEFAULT_WIDTH  640.0
+#define DEFAULT_HEIGHT 480.0
 
 #include <math.h>
-//#include <SDL.h>
-//#include <SDL_opengl.h>
 #include "GUI.h"
+#include <string>
 
 void GUI::camera::init(SDL_Window* window) {
 	
@@ -23,7 +24,6 @@ DP GUI::camera::world2Window(const DP& dp) {
 	return ( dp - pos ) * zoom;
 	//return dp * zoom - pos;
 }
-
 DP GUI::camera::window2World(const DP& dp) {
 	return ( dp / zoom + pos ) ;
 	//return (dp + pos) / zoom;
@@ -52,24 +52,19 @@ D GUI::camera::multiplyZoom(const D& multiplier) {
 	zoom *= multiplier;
 	return zoom;
 }
-
 void GUI::camera::moveProportional(const DP& XY) {
-	pos = pos + XY / zoom * std::min(windowSize.x, windowSize.y);	//move camera by a fraction of the screen, the same amount for x or y
+	pos = pos + XY / zoom * std::min(windowSize.x, windowSize.y);
 }
-
 void GUI::camera::changePerspective(const D& multiplier, const DP& dp) {
-	//pos = pos + windowSize / 20.0 / zoom / multiplier * (multiplier >= 1.0 ? 1.0 : -1.0);
 	DP scaleFactor = { windowSize.x * (dp.x/windowSize.x*2.0), windowSize.y * (dp.y / windowSize.y * 2.0) };
 	pos = pos + scaleFactor / 20.0 / zoom / multiplier * (multiplier >= 1.0 ? 1.0 : -1.0);
 	zoom *= multiplier;
-	
-	// TODO: zoom to a point on the screen
 }
 
 void GUI::createWindow() {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-	camera.setWindowSize( { 800.0, 600.0 } );
+	camera.setWindowSize( { DEFAULT_WIDTH, DEFAULT_HEIGHT } );
 
 	mainWindow = SDL_CreateWindow(
 		"Particle Simulator",
@@ -77,9 +72,9 @@ void GUI::createWindow() {
 		SDL_WINDOWPOS_CENTERED,
 		(int)camera.getWindowSize().x,
 		(int)camera.getWindowSize().y,
-		SDL_WINDOW_OPENGL );
+		SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	mainRenderer = SDL_CreateRenderer(mainWindow, -1, SDL_RENDERER_ACCELERATED);
-	SDL_GL_CreateContext(mainWindow);
+	SDL_GLContext glContext = SDL_GL_CreateContext(mainWindow);
 
 	SDL_GL_SetSwapInterval(1);	//VSYNC
 
@@ -98,50 +93,86 @@ void GUI::createWindow() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
+
+	// Setup Platform/Renderer backends
+	ImGui_ImplSDL2_InitForOpenGL(mainWindow, glContext);
+	ImGui_ImplOpenGL2_Init();
+
 	//camera.init(mainWindow);
 }
-
 void GUI::removeWindow() {
+	ImGui_ImplOpenGL2_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
 	SDL_DestroyRenderer(mainRenderer);
 	SDL_DestroyWindow(mainWindow);
 	SDL_Quit();
+
 }
+void GUI::displayParticle(Particle& p) {
+	glColor4ub((const GLubyte)p.getColor().str.r,
+		(const GLubyte)p.getColor().str.g,
+		(const GLubyte)p.getColor().str.b,
+		(const GLubyte)p.getColor().str.a);
 
+	glBegin(GL_POLYGON);							//draw Particle vertexes
+	for (auto& v : p.getShape()) {
+		glVertex2d(
+			camera.world2Window(v + p.getPos()).x,
+			camera.world2Window(v + p.getPos()).y
+		);
+	}
+	glEnd();
+}
 void GUI::displayParticleVector(PV& pv) {
+	glLoadIdentity();
 	for (auto& p : pv) {
-		//down, right increases
-
-		glLoadIdentity();
-		//glTranslated(0, 0, 0);
-		/*glTranslated(
-			camera.world2Window(p.getPos()).x,
-			camera.world2Window(p.getPos()).y,
-			0.0);*/
-		//glScaled(camera.zoom, camera.zoom, camera.zoom);
-
-		glColor4ub(	(const GLubyte)p.getColor().str.r,	//set displayed particle color
-					(const GLubyte)p.getColor().str.g,
-					(const GLubyte)p.getColor().str.b,
-					(const GLubyte)p.getColor().str.a);
-
-		/*glScaled(camera.getZoom(), camera.getZoom(), camera.getZoom());
-		glTranslated(	camera.world2Window(p.getPos()).x,
-						camera.world2Window(p.getPos()).y,
-						0.0);*/
-		
-		
-		
-
-		glBegin(GL_POLYGON);							//draw Particle vertexes
-		for (auto& v : p.getShape()) {
-			glVertex2d(
-				camera.world2Window(v + p.getPos()).x,
-				camera.world2Window(v + p.getPos()).y
-			);
-		}
-		glEnd();
+		displayParticle(p);
 	}
 	
+}
+
+void GUI::displayImGUI() {
+	using ImGui::BeginMainMenuBar, ImGui::MenuItem, ImGui::BeginMenu, ImGui::SeparatorText, ImGui::EndMenu, ImGui::EndMainMenuBar;
+
+	ImGui_ImplOpenGL2_NewFrame();
+	ImGui_ImplSDL2_NewFrame();
+	ImGui::NewFrame();
+
+	const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(100, 100), ImGuiCond_FirstUseEver);
+
+	if (BeginMainMenuBar()) {
+		if (BeginMenu("Plik")) {
+			if (MenuItem("Menu Bar 1", NULL, 1)) std::cout << "elo";;
+
+			SeparatorText("Separator 1");
+			MenuItem("Test1", NULL, 1);
+
+			SeparatorText("Separator 2");
+			MenuItem("Test2", NULL, 1);
+
+			EndMenu();
+		}
+		if (BeginMenu("Edytuj")) {
+			MenuItem("Sel1 En1", NULL, true, true);
+			MenuItem("Sel1 En0", NULL, true, false);
+			MenuItem("Sel0 En1", NULL, false, true);
+			MenuItem("Sel0 En0", NULL, false, false);
+			EndMenu();
+		}
+		if (MenuItem("Pomoc")) {}
+
+		EndMainMenuBar();
+	}
 }
 
 void GUI::run() {
@@ -151,52 +182,66 @@ void GUI::run() {
 	struct {
 		DP pos;	//mouse position DP
 		bool lClick{}, rClick{}, scrolled{};
-		int scrollX{};			//wheel scroll, positive for right
-		int scrollY{};			//wheel scroll, positive for up
+		D scrollX{};			//wheel scroll, positive for right
+		D scrollY{};			//wheel scroll, positive for up
 	} mouse;
 
 	Particle testPart;
 
-	while(running)
-	{
+	while(running) {
 		while ( SDL_PollEvent(&evt) ) {
-			switch (evt.type)
-			{
+			ImGui_ImplSDL2_ProcessEvent(&evt);
+			ImGuiIO& io = ImGui::GetIO();
+			switch (evt.type) {
 			case SDL_QUIT:
 				running = false;
+				break;
+			case SDL_WINDOWEVENT:
+
+				if (evt.window.event == SDL_WINDOWEVENT_RESIZED) {
+					camera.setWindowSize({(D)evt.window.data1, (D)evt.window.data2 });
+
+					glViewport(0, 0, (GLsizei)camera.getWindowSize().x, (GLsizei)camera.getWindowSize().y);
+					glMatrixMode(GL_PROJECTION);
+					glLoadIdentity();
+					glOrtho(0, camera.getWindowSize().x, camera.getWindowSize().y, 0, 0, 1000);
+					glMatrixMode(GL_MODELVIEW);
+				}
 				break;
 			case SDL_MOUSEMOTION:
 				mouse.pos.x = (D)evt.motion.x;
 				mouse.pos.y = (D)evt.motion.y;
 				break;
 			case SDL_MOUSEBUTTONDOWN:
-				switch (evt.button.button) {
-				case SDL_BUTTON_LEFT:
-					mouse.lClick = true;
+				//io.AddMouseButtonEvent(evt.button.button, true);
+				if (!io.WantCaptureMouse)
+					switch (evt.button.button) {
+					case SDL_BUTTON_LEFT:
+						mouse.lClick = true;
+						break;
+					case SDL_BUTTON_RIGHT:
+						mouse.rClick = true;
+						break;
+					default:
 					break;
-				case SDL_BUTTON_RIGHT:
-					mouse.rClick = true;
-					break;
-				default:
-					
-					break;
-				}
+					}
 				break;
 			case SDL_MOUSEWHEEL:
-				switch (evt.wheel.type) {
-				case SDL_MOUSEWHEEL:
-					mouse.scrolled = true;
-					mouse.scrollX = evt.wheel.x;
-					mouse.scrollY = evt.wheel.y;
-					break;
+				if (!io.WantCaptureMouse)
+					switch (evt.wheel.type) {
+					case SDL_MOUSEWHEEL:
+						mouse.scrolled = true;
+						mouse.scrollX = evt.wheel.x;
+						mouse.scrollY = evt.wheel.y;
+						break;
 
-				default:
-					break;
-				}
+					default:
+						break;
+					}
 				break;
 			case SDL_KEYDOWN:
-				switch (evt.key.keysym.sym)
-				{
+				if (!io.WantCaptureKeyboard)
+				switch (evt.key.keysym.sym) {
 				case SDLK_UP:
 					camera.moveProportional({ 0.0, -0.1 });
 					break;
@@ -212,8 +257,7 @@ void GUI::run() {
 				}
 				break;
 			case SDL_KEYUP:
-				switch (evt.key.keysym.sym)
-				{
+				switch (evt.key.keysym.sym) {
 				case SDLK_UP:
 					break;
 				case SDLK_DOWN:
@@ -225,7 +269,11 @@ void GUI::run() {
 				}
 				break;
 			}
+			
 		}
+		
+		// Start the Dear ImGui frame
+		displayImGUI();
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -241,24 +289,11 @@ void GUI::run() {
 		};
 		displayParticleVector(physicsEngine.getParticles());
 
-		//glLoadIdentity();
-		////glTranslatef(400.0f, 300.0f, 0.0f);
+		//	draw the imGUI
+		ImGui::Render();
+		ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 
-		//glColor3f(1.0f, 1.0f, 1.0f);
-		//glLineWidth(2.0);
-		//glBegin(GL_LINES);	//debugging crossing lines
-		//	glVertex2d(0.0, 0.0);
-		//	glVertex2d(camera.getWindowSize().x, camera.getWindowSize().y);
-		//	glVertex2d(0.0, camera.getWindowSize().y);
-		//	glVertex2d(camera.getWindowSize().x, 0.0);
-		//glEnd();
-		/*glBegin(GL_POLYGON);
-		glVertex2f(-100.0f, 100.0f);
-		glVertex2f(100.0f, 100.0f);
-		glVertex2f(100.0f, -100.0f);
-		glVertex2f(-100.0f, 0.0f);*/
-		
-
+		//	draw the openGL content
 		SDL_GL_SwapWindow(mainWindow);
 
 		mouse.lClick = false;

@@ -31,12 +31,13 @@ endif()
 include_directories( ../ParticleSimulator_PhysicsLib/include )
 include_directories( ./include )
 include_directories( ../SDL2/include )
+include_directories( ../imgui )
 
 link_directories( ../SDL/lib/Debug )
 link_directories( ../SDL/lib/Release )
 
 # Automatically add all *.cpp files to the project
-file ( GLOB SOURCES "./src/*.cpp" )
+file ( GLOB SOURCES "./src/*.cpp" "../imgui/*.cpp" "../imgui/backends/imgui_impl_sdl2.cpp" "../imgui/backends/imgui_impl_opengl2.cpp" )
 
 # Add source file to the build executable
 add_executable( ${PROJECT_NAME} ${SOURCES} )
