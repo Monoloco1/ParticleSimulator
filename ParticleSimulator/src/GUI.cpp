@@ -1,4 +1,4 @@
-/*
+﻿/*
 -------------------------------------
 |	Software written by Cristian Niwelt (C)
 |
@@ -7,11 +7,12 @@
 -------------------------------------
 */
 
+#define DEFAULT_WIDTH  640.0
+#define DEFAULT_HEIGHT 480.0
 
 #include <math.h>
-//#include <SDL.h>
-//#include <SDL_opengl.h>
 #include "GUI.h"
+#include <string>
 
 void GUI::camera::init(SDL_Window* window) {
 	
@@ -23,7 +24,6 @@ DP GUI::camera::world2Window(const DP& dp) {
 	return ( dp - pos ) * zoom;
 	//return dp * zoom - pos;
 }
-
 DP GUI::camera::window2World(const DP& dp) {
 	return ( dp / zoom + pos ) ;
 	//return (dp + pos) / zoom;
@@ -52,11 +52,9 @@ D GUI::camera::multiplyZoom(const D& multiplier) {
 	zoom *= multiplier;
 	return zoom;
 }
-
 void GUI::camera::moveProportional(const DP& XY) {
 	pos = pos + XY / zoom * std::min(windowSize.x, windowSize.y);
 }
-
 void GUI::camera::changePerspective(const D& multiplier, const DP& dp) {
 	DP scaleFactor = { windowSize.x * (dp.x/windowSize.x*2.0), windowSize.y * (dp.y / windowSize.y * 2.0) };
 	pos = pos + scaleFactor / 20.0 / zoom / multiplier * (multiplier >= 1.0 ? 1.0 : -1.0);
@@ -66,7 +64,7 @@ void GUI::camera::changePerspective(const D& multiplier, const DP& dp) {
 void GUI::createWindow() {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-	camera.setWindowSize( { 800.0, 600.0 } );
+	camera.setWindowSize( { DEFAULT_WIDTH, DEFAULT_HEIGHT } );
 
 	mainWindow = SDL_CreateWindow(
 		"Particle Simulator",
@@ -74,7 +72,7 @@ void GUI::createWindow() {
 		SDL_WINDOWPOS_CENTERED,
 		(int)camera.getWindowSize().x,
 		(int)camera.getWindowSize().y,
-		SDL_WINDOW_OPENGL );
+		SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	mainRenderer = SDL_CreateRenderer(mainWindow, -1, SDL_RENDERER_ACCELERATED);
 	SDL_GLContext glContext = SDL_GL_CreateContext(mainWindow);
 
@@ -98,7 +96,7 @@ void GUI::createWindow() {
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
+	io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
@@ -109,7 +107,6 @@ void GUI::createWindow() {
 
 	//camera.init(mainWindow);
 }
-
 void GUI::removeWindow() {
 	ImGui_ImplOpenGL2_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
@@ -119,7 +116,6 @@ void GUI::removeWindow() {
 	SDL_Quit();
 
 }
-
 void GUI::displayParticle(Particle& p) {
 	glColor4ub((const GLubyte)p.getColor().str.r,
 		(const GLubyte)p.getColor().str.g,
@@ -135,13 +131,48 @@ void GUI::displayParticle(Particle& p) {
 	}
 	glEnd();
 }
-
 void GUI::displayParticleVector(PV& pv) {
 	glLoadIdentity();
 	for (auto& p : pv) {
 		displayParticle(p);
 	}
 	
+}
+
+void GUI::displayImGUI() {
+	using ImGui::BeginMainMenuBar, ImGui::MenuItem, ImGui::BeginMenu, ImGui::SeparatorText, ImGui::EndMenu, ImGui::EndMainMenuBar;
+
+	ImGui_ImplOpenGL2_NewFrame();
+	ImGui_ImplSDL2_NewFrame();
+	ImGui::NewFrame();
+
+	const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(100, 100), ImGuiCond_FirstUseEver);
+
+	if (BeginMainMenuBar()) {
+		if (BeginMenu("Plik")) {
+			if (MenuItem("Menu Bar 1", NULL, 1)) std::cout << "elo";;
+
+			SeparatorText("Separator 1");
+			MenuItem("Test1", NULL, 1);
+
+			SeparatorText("Separator 2");
+			MenuItem("Test2", NULL, 1);
+
+			EndMenu();
+		}
+		if (BeginMenu("Edytuj")) {
+			MenuItem("Sel1 En1", NULL, true, true);
+			MenuItem("Sel1 En0", NULL, true, false);
+			MenuItem("Sel0 En1", NULL, false, true);
+			MenuItem("Sel0 En0", NULL, false, false);
+			EndMenu();
+		}
+		if (MenuItem("Pomoc")) {}
+
+		EndMainMenuBar();
+	}
 }
 
 void GUI::run() {
@@ -157,14 +188,25 @@ void GUI::run() {
 
 	Particle testPart;
 
-	while(running)
-	{
+	while(running) {
 		while ( SDL_PollEvent(&evt) ) {
 			ImGui_ImplSDL2_ProcessEvent(&evt);
 			ImGuiIO& io = ImGui::GetIO();
 			switch (evt.type) {
 			case SDL_QUIT:
 				running = false;
+				break;
+			case SDL_WINDOWEVENT:
+
+				if (evt.window.event == SDL_WINDOWEVENT_RESIZED) {
+					camera.setWindowSize({(D)evt.window.data1, (D)evt.window.data2 });
+
+					glViewport(0, 0, (GLsizei)camera.getWindowSize().x, (GLsizei)camera.getWindowSize().y);
+					glMatrixMode(GL_PROJECTION);
+					glLoadIdentity();
+					glOrtho(0, camera.getWindowSize().x, camera.getWindowSize().y, 0, 0, 1000);
+					glMatrixMode(GL_MODELVIEW);
+				}
 				break;
 			case SDL_MOUSEMOTION:
 				mouse.pos.x = (D)evt.motion.x;
@@ -198,8 +240,8 @@ void GUI::run() {
 					}
 				break;
 			case SDL_KEYDOWN:
-				switch (evt.key.keysym.sym)
-				{
+				if (!io.WantCaptureKeyboard)
+				switch (evt.key.keysym.sym) {
 				case SDLK_UP:
 					camera.moveProportional({ 0.0, -0.1 });
 					break;
@@ -215,8 +257,7 @@ void GUI::run() {
 				}
 				break;
 			case SDL_KEYUP:
-				switch (evt.key.keysym.sym)
-				{
+				switch (evt.key.keysym.sym) {
 				case SDLK_UP:
 					break;
 				case SDLK_DOWN:
@@ -232,10 +273,8 @@ void GUI::run() {
 		}
 		
 		// Start the Dear ImGui frame
-		ImGui_ImplOpenGL2_NewFrame();
-		ImGui_ImplSDL2_NewFrame();
-		ImGui::NewFrame();
-		ImGui::ShowDemoWindow(); // Show demo window! :)
+		displayImGUI();
+		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//physicsEngine.runPhysicsIteration();
