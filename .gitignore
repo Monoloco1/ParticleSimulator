@@ -3,6 +3,16 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Exceptions for gitignore
+# Pre-built SDL library
+!SDL2.dll
+!SDL2.exp
+!SDL2.ilk
+!SDL2.lib
+!SDL2.pdb
+!SDL2main.lib
+
+
 # User-specific files
 *.rsuser
 *.suo
