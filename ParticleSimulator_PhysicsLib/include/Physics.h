@@ -29,6 +29,7 @@ public:
 	void removeParticles(int index);
 	void removeParticles(int startIndex, int length);
 	void addParticle(Particle& p);
+	//void setParticle(int index, Particle& p);
 	PV getParticles();
 	Particle getParticles(int index);
 
