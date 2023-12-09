@@ -25,7 +25,7 @@ elseif( UNIX )
 endif()
 
 
-
+#add_subdirectory( ../ParticleSimulator_PhysicsLib/src )
 
 # Inform CMake where the header files are
 include_directories( ../ParticleSimulator_PhysicsLib/include )
