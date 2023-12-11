@@ -67,6 +67,12 @@ void Physics::collisionReaction(Particle& p1, Particle& p2, const D& offsetX, co
 	p1.setColor(prt::Red);
 	p2.setColor(prt::Red);
 }
+void Physics::collisionReaction(const int& p1, const int& p2, const D& offsetX, const D& offsetY) {
+	assert(p1 < particles.size() && p1 >= 0);
+	assert(p2 < particles.size() && p2 >= 0);
+	particles.at(p1).setColor(prt::Red);
+	particles.at(p2).setColor(prt::Red);
+}
 
 /*	collisionDetect(Particle& p1, Particle& p2, D& offsetX, D& offsetY)
 |	collisionDetect(int& p1, int& p2, D& offsetX, D& offsetY)
