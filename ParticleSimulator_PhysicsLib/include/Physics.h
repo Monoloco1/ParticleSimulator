@@ -28,14 +28,15 @@ protected:
 public:
 	void removeParticles(const int& index);
 	void removeParticles(const int& startIndex, const int& length);
-	void addParticle(Particle& p);
-	void setParticles(const int& index, Particle& p);
-	void setParticles(PV& newParticles);
+	void addParticle(const Particle& p);
+	void setParticles(const int& index, const Particle& p);
+	void setParticles(const PV& newParticles);
 	PV getParticles();
 	Particle getParticles(const int& index);
 
 	void collisionReaction(Particle& p1, Particle& p2, const D& offsetX, const D& offsetY);
 	bool collisionDetect(const Particle& p1, const Particle& p2, D& offsetX, D& offsetY);
+	bool collisionDetect(const int& p1, const int& p2, D& offsetX, D& offsetY);
 	void runPhysicsIteration();
 	
 

@@ -30,7 +30,7 @@ DP Particle::getPos() const {
 |-----------------------------------
 |	OUTPUT: void
 */
-void Particle::setPos(DP& newPos) {
+void Particle::setPos(const DP& newPos) {
 	pos = newPos;
 }
 
@@ -54,7 +54,7 @@ DP Particle::getVel() const {
 |-----------------------------------
 |	OUTPUT: void
 */
-void Particle::setVel(DP& newVel) {
+void Particle::setVel(const DP& newVel) {
 	vel = newVel;
 }
 
@@ -79,7 +79,7 @@ prt::Color Particle::getColor() const {
 |-----------------------------------
 |	OUTPUT: void
 */
-void Particle::setColor(prt::Color newCol) {
+void Particle::setColor(const prt::Color newCol) {
 	col = newCol;
 }
 
@@ -102,7 +102,7 @@ Particle::Particle(const DP& pos, const DP& vel, const D& mass, const prt::Color
 |-----------------------------------
 |	OUTPUT: void
 */
-void Particle::setShape(DPV& newShape) {
+void Particle::setShape(const DPV& newShape) {
 	shape = newShape;
 }
 
@@ -162,8 +162,11 @@ DP::DP(const D& x, const D& y) {
 	this->y = y;
 }
 
-DP& DP::operator= (const DP& dp1) = default;
-
+DP& DP::operator= (const DP& dp1) {// = default;
+	this->x = dp1.x;
+	this->y = dp1.y;
+	return *this;
+}
 DP::DP(const DP& dp) {
 	this->x = dp.x;
 	this->y = dp.y;

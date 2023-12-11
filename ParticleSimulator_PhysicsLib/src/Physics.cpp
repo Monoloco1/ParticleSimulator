@@ -20,14 +20,14 @@
 |-----------------------------------
 |	OUTPUT: void
 */
-void Physics::addParticle(Particle& p) {
+void Physics::addParticle(const Particle& p) {
 	particles.push_back(p);
 }
 
-void Physics::setParticles(const int& index, Particle& p) {
+void Physics::setParticles(const int& index, const Particle& p) {
 	particles.at(index) = p;
 }
-void Physics::setParticles(PV& newParticles) {
+void Physics::setParticles(const PV& newParticles) {
 	particles = newParticles;
 }
 
@@ -69,6 +69,7 @@ void Physics::collisionReaction(Particle& p1, Particle& p2, const D& offsetX, co
 }
 
 /*	collisionDetect(Particle& p1, Particle& p2, D& offsetX, D& offsetY)
+|	collisionDetect(int& p1, int& p2, D& offsetX, D& offsetY)
 |-----------------------------------
 |	This function detects if two Particles collide
 |-----------------------------------
@@ -79,6 +80,11 @@ void Physics::collisionReaction(Particle& p1, Particle& p2, const D& offsetX, co
 */
 bool Physics::collisionDetect(const Particle& p1, const Particle& p2, D& offsetX, D& offsetY) {
 	//if( p1.getPos().x - p1.)
+	return false;
+}
+bool Physics::collisionDetect(const int& p1, const int& p2, D& offsetX, D& offsetY) {
+	assert(p1 < particles.size() && p1 >= 0);
+	assert(p2 < particles.size() && p2 >= 0);
 	return false;
 }
 

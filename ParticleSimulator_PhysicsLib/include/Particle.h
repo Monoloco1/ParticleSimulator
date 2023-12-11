@@ -81,12 +81,12 @@ protected:
 
 public:
 	DP getPos() const;
-	void setPos(DP& newPos);
+	void setPos(const DP& newPos);
 	DP getVel() const;
-	void setVel(DP& newVel);
-	void setColor(prt::Color newCol);
+	void setVel(const DP& newVel);
+	void setColor(const prt::Color newCol);
 	prt::Color getColor() const;
-	void setShape(DPV& newShape);
+	void setShape(const DPV& newShape);
 	DPV getShape() const;
 
 	

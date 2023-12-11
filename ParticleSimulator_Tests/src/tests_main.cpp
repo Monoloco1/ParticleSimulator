@@ -9,7 +9,7 @@ TEST(ParticlePhysics_Tests, BasicAssertions) {
   EXPECT_EQ(7 * 6, 42);
 }
 
-TEST(ParticlePhysics_TestFixture, add_remove_get_Particles) {
+TEST(ParticlePhysics_Tests, add_remove_get_Particles) {
 	//Create test Physics object
 	Physics testPhysics;
 
@@ -21,13 +21,8 @@ TEST(ParticlePhysics_TestFixture, add_remove_get_Particles) {
 	testPhysics.addParticle(testParticle);
 	ASSERT_EQ(testPhysics.getParticles().size(), 1);
 	
-	for (int i{}; i < 100; ++i) {
-		//const DP dp{};
-		//dp.x = (D)i;
-		//dp.x = (D)i*i;
-		//testParticle.setPos( { (D)i, (D)i * i });
-		//testPhysics.addParticle( Particle( const {1.0, 1.0} ));
-	}
+	for (int i{}; i < 100; ++i) 
+		testPhysics.addParticle(Particle({ (D)i, (D)i * (D)i }));
 	ASSERT_EQ(testPhysics.getParticles().size(), 101);
 
 	testPhysics.removeParticles(10);
@@ -35,15 +30,27 @@ TEST(ParticlePhysics_TestFixture, add_remove_get_Particles) {
 
 	testPhysics.removeParticles(20, 10);
 	ASSERT_EQ(testPhysics.getParticles().size(), 90);
+	ASSERT_EQ(testPhysics.getParticles(15).getPos().x, 15.0);
+	ASSERT_EQ(testPhysics.getParticles(15).getPos().y, 225.0 );
 
+	// more tests here
+}
 
-	//std::cout << testPhysics.getParticles(15).getPos().x << " " << testPhysics.getParticles(15).getPos().y;
-	//ASSERT_EQ( testPhysics.getParticles(15).getPos(), (DP){15.0, 225.0} );
-	/*void removeParticles(int index);
-	void removeParticles(int startIndex, int length);
-	void addParticle(Particle & p);
-	PV getParticles();
-	Particle getParticles(int index);*/
+TEST(ParticlePhysics_Tests, collsionDetection_test) {
+	Physics testPhysics;
+
+	//Initialize test Particles
+	Particle testParticle1({ 1.0, 1.0 });
+	Particle testParticle2({ 2.0, 2.0 });	//should collide
+	testPhysics.addParticle(testParticle1);
+	testPhysics.addParticle(testParticle2);
+	D offX{};
+	D offY{};
+	ASSERT_TRUE( testPhysics.collisionDetect(0, 1, offX, offY) );
+
+	testParticle2.setPos( { 1.0, 100.0 } );
+	testPhysics.setParticles( 1, testParticle2 );
+	ASSERT_FALSE(testPhysics.collisionDetect(0, 1, offX, offY));
 }
 
 
