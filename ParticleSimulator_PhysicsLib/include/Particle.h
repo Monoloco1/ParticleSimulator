@@ -19,11 +19,24 @@ using D = double;	//	Data
 struct DP {			//	Data Pair
 	D x{};
 	D y{};
+public:
+	DP& operator= (const DP& dp1);
+	DP(const DP& dp);
+	DP(const D& x, const D& y);
 };
+
 DP operator+ (const DP& dp1, const DP& dp2);
 DP operator* (const DP& dp, const D& mult);
 DP operator/ (const DP& dp, const D& div);
-DP operator-(const DP& dp1, const DP& dp2);
+DP operator- (const DP& dp1, const DP& dp2);
+
+DP operator+= (const DP& dp1, const DP& dp2);
+DP operator*= (const DP& dp, const D& mult);
+DP operator/= (const DP& dp, const D& div);
+DP operator-= (const DP& dp1, const DP& dp2);
+
+
+
 
 using DPV = vector<DP>;	//	Data Pair Vector
 
@@ -65,14 +78,14 @@ protected:
 	prt::Color col{ {255, 255, 255, 255} };
 
 public:
-	DP getPos();
+	DP getPos() const;
 	void setPos(DP& newPos);
-	DP getVel();
+	DP getVel() const;
 	void setVel(DP& newVel);
 	void setColor(prt::Color newCol);
-	prt::Color getColor();
+	prt::Color getColor() const;
 	void setShape(DPV& newShape);
-	DPV getShape();
+	DPV getShape() const;
 
 	
 	Particle() = default;	// moze do particle.cpp?

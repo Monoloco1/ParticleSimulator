@@ -18,7 +18,7 @@
 |-----------------------------------
 |	OUTPUT: DP pos
 */
-DP Particle::getPos() {
+DP Particle::getPos() const {
 	return pos;
 }
 
@@ -42,7 +42,7 @@ void Particle::setPos(DP& newPos) {
 |-----------------------------------
 |	OUTPUT: DP vel
 */
-DP Particle::getVel() {
+DP Particle::getVel() const {
 	return vel;
 }
 
@@ -66,7 +66,7 @@ void Particle::setVel(DP& newVel) {
 |-----------------------------------
 |	OUTPUT: prt::Color col
 */
-prt::Color Particle::getColor() {
+prt::Color Particle::getColor() const {
 	return col;
 }
 
@@ -114,7 +114,7 @@ void Particle::setShape(DPV& newShape) {
 |-----------------------------------
 |	OUTPUT: vector of Data Points representing shape
 */
-DPV Particle::getShape() {
+DPV Particle::getShape() const {
 	return shape;
 }
 
@@ -155,6 +155,18 @@ Particle::Particle(const DP& pos) : pos(pos) {
 */
 Particle::~Particle() {}
 
+DP::DP(const D& x, const D& y) {
+	this->x = x;
+	this->y = y;
+}
+
+DP& DP::operator= (const DP& dp1) = default;
+
+DP::DP(const DP& dp) {
+	this->x = dp.x;
+	this->y = dp.y;
+}
+
 /*	+,-,/,* operator overloads for the DP struct
 |-----------------------------------
 |	TODO
@@ -167,8 +179,16 @@ DP operator+(const DP& dp1, const DP& dp2) {
 	DP summed{ dp1.x + dp2.x, dp1.y + dp2.y };
 	return summed;
 }
+DP operator+=(const DP& dp1, const DP& dp2) {
+	DP summed{ dp1.x + dp2.x, dp1.y + dp2.y };
+	return summed;
+}
 
 DP operator-(const DP& dp1, const DP& dp2) {
+	DP summed{ dp1.x - dp2.x, dp1.y - dp2.y };
+	return summed;
+}
+DP operator-=(const DP& dp1, const DP& dp2) {
 	DP summed{ dp1.x - dp2.x, dp1.y - dp2.y };
 	return summed;
 }
@@ -177,8 +197,17 @@ DP operator*(const DP& dp, const D& mult) {
 	DP multiplied{ dp.x * mult, dp.y * mult };
 	return multiplied;
 }
+DP operator*=(const DP& dp, const D& mult) {
+	DP multiplied{ dp.x * mult, dp.y * mult };
+	return multiplied;
+}
 
 DP operator/(const DP& dp, const D& div) {
 	DP divided{ dp.x / div, dp.y / div };
 	return divided;
 }
+DP operator/=(const DP& dp, const D& div) {
+	DP divided{ dp.x / div, dp.y / div };
+	return divided;
+}
+
