@@ -26,15 +26,16 @@ protected:
 	//map
 
 public:
-	void removeParticles(int index);
-	void removeParticles(int startIndex, int length);
+	void removeParticles(const int& index);
+	void removeParticles(const int& startIndex, const int& length);
 	void addParticle(Particle& p);
-	//void setParticle(int index, Particle& p);
+	void setParticles(const int& index, Particle& p);
+	void setParticles(PV& newParticles);
 	PV getParticles();
-	Particle getParticles(int index);
+	Particle getParticles(const int& index);
 
-	void collisionReaction(Particle& p1, Particle& p2, D& offsetX, D& offsetY);
-	bool collisionDetect(Particle& p1, Particle& p2, D& offsetX, D& offsetY);
+	void collisionReaction(Particle& p1, Particle& p2, const D& offsetX, const D& offsetY);
+	bool collisionDetect(const Particle& p1, const Particle& p2, D& offsetX, D& offsetY);
 	void runPhysicsIteration();
 	
 

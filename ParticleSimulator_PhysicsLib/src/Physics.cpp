@@ -12,9 +12,6 @@
 
 
 
-
-
-
 /*	addParticle( Particle& p )
 |-----------------------------------
 |	This function adds a new particle to the Particle container
@@ -25,6 +22,13 @@
 */
 void Physics::addParticle(Particle& p) {
 	particles.push_back(p);
+}
+
+void Physics::setParticles(const int& index, Particle& p) {
+	particles.at(index) = p;
+}
+void Physics::setParticles(PV& newParticles) {
+	particles = newParticles;
 }
 
 /*	getParticles( )
@@ -47,7 +51,7 @@ PV Physics::getParticles() {
 |-----------------------------------
 |	OUTPUT: Particle
 */
-Particle Physics::getParticles(int index) {
+Particle Physics::getParticles(const int& index) {
 	return particles[index];
 }
 
@@ -59,7 +63,7 @@ Particle Physics::getParticles(int index) {
 |-----------------------------------
 |	OUTPUT: void
 */
-void Physics::collisionReaction(Particle& p1, Particle& p2, D& offsetX, D& offsetY) {
+void Physics::collisionReaction(Particle& p1, Particle& p2, const D& offsetX, const D& offsetY) {
 	p1.setColor(prt::Red);
 	p2.setColor(prt::Red);
 }
@@ -73,7 +77,7 @@ void Physics::collisionReaction(Particle& p1, Particle& p2, D& offsetX, D& offse
 |	OUTPUT: boolean true if they collide
 |			distances in X,Y dims between centers of Particles(change referenced D's)
 */
-bool Physics::collisionDetect(Particle& p1, Particle& p2, D& offsetX, D& offsetY) {
+bool Physics::collisionDetect(const Particle& p1, const Particle& p2, D& offsetX, D& offsetY) {
 	//if( p1.getPos().x - p1.)
 	return false;
 }
@@ -119,10 +123,10 @@ void Physics::runPhysicsIteration() {
 |-----------------------------------
 |	OUTPUT: void
 */
-void Physics::removeParticles(int index) {
+void Physics::removeParticles(const int& index) {
 	particles.erase(particles.begin() + index);
 }
-void Physics::removeParticles(int startIndex, int length) {
+void Physics::removeParticles(const int& startIndex, const int& length) {
 	particles.erase(particles.begin() + startIndex, particles.begin() + startIndex + length);
 }
 
