@@ -53,6 +53,25 @@ TEST(ParticlePhysics_Tests, collsionDetection_test) {
 	ASSERT_FALSE(testPhysics.collisionDetect(0, 1, offX, offY));
 }
 
+TEST(ParticlePhysics_Tests, collsionReaction_test) {
+	Physics testPhysics;
+
+	//Initialize test Particles
+	Particle testParticle1({ 1.0, 1.0 });
+	Particle testParticle2({ 2.0, 2.0 });	//should collide
+	testPhysics.addParticle(testParticle1);
+	testPhysics.addParticle(testParticle2);
+	D offX{};
+	D offY{};
+	if (testPhysics.collisionDetect(0, 1, offX, offY)) {
+		testPhysics.collisionReaction(0, 1, offX, offY);
+	}
+	ASSERT_NE(testPhysics.getParticles(0).getPos().x, testParticle1.getPos().x);
+	ASSERT_NE(testPhysics.getParticles(0).getPos().y, testParticle1.getPos().y);
+	ASSERT_NE(testPhysics.getParticles(1).getPos().x, testParticle2.getPos().x);
+	ASSERT_NE(testPhysics.getParticles(1).getPos().y, testParticle2.getPos().y);
+}
+
 
 int main(int argc, char** argv) {
 	testing::InitGoogleTest(&argc, argv);
