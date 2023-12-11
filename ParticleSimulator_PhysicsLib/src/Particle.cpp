@@ -10,42 +10,124 @@
 
 #include "Particle.h"
 
+/*	getPos()
+|-----------------------------------
+|	This function returns the pos struct of the Particle
+|-----------------------------------
+|	INPUT: void
+|-----------------------------------
+|	OUTPUT: DP pos
+*/
 DP Particle::getPos() {
 	return pos;
 }
 
+/*	setPos( DP& newPos )
+|-----------------------------------
+|	This function sets the Particle's pos to newPos
+|-----------------------------------
+|	INPUT: new pos struct
+|-----------------------------------
+|	OUTPUT: void
+*/
 void Particle::setPos(DP& newPos) {
 	pos = newPos;
 }
 
+/*	getVel()
+|-----------------------------------
+|	This function returns the vel struct of the Particle
+|-----------------------------------
+|	INPUT: void
+|-----------------------------------
+|	OUTPUT: DP vel
+*/
 DP Particle::getVel() {
 	return vel;
 }
 
+/*	setVel( DP& newVel )
+|-----------------------------------
+|	This function sets the Particle's vel to newVel
+|-----------------------------------
+|	INPUT: new vel struct
+|-----------------------------------
+|	OUTPUT: void
+*/
 void Particle::setVel(DP& newVel) {
 	vel = newVel;
 }
 
-void Particle::setColor(prt::Color newCol) {
-	col = newCol;
-}
-
+/*	getCol()
+|-----------------------------------
+|	This function returns the col prt::Color of the Particle
+|-----------------------------------
+|	INPUT: void
+|-----------------------------------
+|	OUTPUT: prt::Color col
+*/
 prt::Color Particle::getColor() {
 	return col;
 }
 
 
+/*	setCol( prt::Color newCol )
+|-----------------------------------
+|	This function sets the Particle's col to newCol
+|-----------------------------------
+|	INPUT: new prt::Color col struct
+|-----------------------------------
+|	OUTPUT: void
+*/
+void Particle::setColor(prt::Color newCol) {
+	col = newCol;
+}
+
+/*	Particle( * )
+|-----------------------------------
+|	This constructor of the Particle class sets all parameters of the class
+|-----------------------------------
+|	INPUT: all Particle parameters
+|-----------------------------------
+|	OUTPUT: Particle
+*/
 Particle::Particle(const DP& pos, const DP& vel, const D& mass, const prt::Color& col, const BB& bb, const DPV& shape) :
 	pos(pos), vel(vel), mass(mass), col(col), bb(bb), shape(shape) {}
 
+/*	setShape( DPV& newShape )
+|-----------------------------------
+|	This function sets the Shape vector of the Particle
+|-----------------------------------
+|	INPUT: vector of Data Points representing shape
+|-----------------------------------
+|	OUTPUT: void
+*/
 void Particle::setShape(DPV& newShape) {
 	shape = newShape;
 }
 
+/*	getShape( )
+|-----------------------------------
+|	This function gets the Shape vector of the Particle
+|-----------------------------------
+|	INPUT: void
+|-----------------------------------
+|	OUTPUT: vector of Data Points representing shape
+*/
 DPV Particle::getShape() {
 	return shape;
 }
 
+/*	Particle( const DP& pos )
+|-----------------------------------
+|	This constructor of the Particle class sets default parameters for all
+|	parameters of the class apart from the pos struct
+|	Useful for debugging
+|-----------------------------------
+|	INPUT: Particle's pos Data Point
+|-----------------------------------
+|	OUTPUT: Particle
+*/
 Particle::Particle(const DP& pos) : pos(pos) {
 	vel = { 0.0, 0.0 };
 	mass = 1.1;
@@ -63,8 +145,24 @@ Particle::Particle(const DP& pos) : pos(pos) {
 	};	// approximation of an octagon :)
 }
 
+/*	~Particle( )
+|-----------------------------------
+|	Default destructor of the Particle. Leaves destruction to the compiler
+|-----------------------------------
+|	INPUT: void
+|-----------------------------------
+|	OUTPUT: void
+*/
 Particle::~Particle() {}
 
+/*	+,-,/,* operator overloads for the DP struct
+|-----------------------------------
+|	TODO
+|-----------------------------------
+|	INPUT: all Particle parameters
+|-----------------------------------
+|	OUTPUT: Particle
+*/
 DP operator+(const DP& dp1, const DP& dp2) {
 	DP summed{ dp1.x + dp2.x, dp1.y + dp2.y };
 	return summed;

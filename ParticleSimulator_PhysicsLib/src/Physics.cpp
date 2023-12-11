@@ -27,12 +27,41 @@ void Physics::addParticle(Particle& p) {
 	particles.push_back(p);
 }
 
+/*	getParticles( )
+|-----------------------------------
+|	This function returns the particles vector from the Physics class
+|-----------------------------------
+|	INPUT: void
+|-----------------------------------
+|	OUTPUT: PV particles
+*/
 PV Physics::getParticles() {
 	return particles;
 }
 
+/*	getParticle( int index )
+|-----------------------------------
+|	This function  returns the particle indexed from the Physics class
+|-----------------------------------
+|	INPUT: index of the Particle wanted
+|-----------------------------------
+|	OUTPUT: Particle
+*/
 Particle Physics::getParticles(int index) {
 	return particles[index];
+}
+
+/*	collisionReaction(Particle& p1, Particle& p2, D& offsetX, D& offsetY)
+|-----------------------------------
+|	This function applies a reaction function to the colliding particles
+|-----------------------------------
+|	INPUT: two Particles and offsets by which they collide by
+|-----------------------------------
+|	OUTPUT: void
+*/
+void Physics::collisionReaction(Particle& p1, Particle& p2, D& offsetX, D& offsetY) {
+	p1.setColor(prt::Red);
+	p2.setColor(prt::Red);
 }
 
 /*	collisionDetect(Particle& p1, Particle& p2, D& offsetX, D& offsetY)
@@ -42,17 +71,22 @@ Particle Physics::getParticles(int index) {
 |	INPUT: two Particles
 |-----------------------------------
 |	OUTPUT: boolean true if they collide
-|			distances in X,Y dims between centers(change referenced D's)
+|			distances in X,Y dims between centers of Particles(change referenced D's)
 */
-void Physics::collisionReaction(Particle& p1, Particle& p2, D& offsetX, D& offsetY) {
-	p1.setColor(prt::Red);
-	p2.setColor(prt::Red);
-}
 bool Physics::collisionDetect(Particle& p1, Particle& p2, D& offsetX, D& offsetY) {
 	//if( p1.getPos().x - p1.)
 	return false;
 }
 
+/*	runPhysicsIteration()
+|-----------------------------------
+|	This function applies the collision detection/reaction function to every pair of particles
+|	in the particle vector
+|-----------------------------------
+|	INPUT: void
+|-----------------------------------
+|	OUTPUT: void
+*/
 void Physics::runPhysicsIteration() {
 	D offX{}, offY{};
 
@@ -77,11 +111,11 @@ void Physics::runPhysicsIteration() {
 	}*/
 }
 
-/*	removeParticles( index ), removeParticles(int startIndex, int length)
+/*	removeParticles( index ); removeParticles(int startIndex, int length)
 |-----------------------------------
 |	This function removes Particles from the Particle container
 |-----------------------------------
-|	INPUT: valid Particle index, valid Particle index & how many Particles to remove
+|	INPUT: valid Particle index; valid Particle index & how many Particles to remove
 |-----------------------------------
 |	OUTPUT: void
 */

@@ -35,6 +35,7 @@ struct BB {			// Bounding Box
 };
 
 namespace prt {	//	Particle namespace
+	//	This Color struct is created to add compatibility for other graphics libraries than SDL
 	union Color {	//	Color union compatible with SDL_Color
 		struct {
 			uint8_t r;
