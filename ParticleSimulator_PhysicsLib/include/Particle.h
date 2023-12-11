@@ -23,6 +23,8 @@ public:
 	DP& operator= (const DP& dp1);
 	DP(const DP& dp);
 	DP(const D& x, const D& y);
+
+	DP() = default;	//	intellisense helped to create this constructor when debugging :)
 };
 
 DP operator+ (const DP& dp1, const DP& dp2);
