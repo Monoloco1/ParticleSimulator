@@ -56,8 +56,8 @@ protected:
 
 	public:
 		void init(SDL_Window* window);
-		DP world2Window(const DP& dp);
-		DP window2World(const DP& dp);
+		DP world2Window(const DP& dp) const;
+		DP window2World(const DP& dp) const;
 
 		DP getPos();
 		void setPos(const DP& newPos);
@@ -71,14 +71,15 @@ protected:
 		void moveProportional(const DP & XY);
 		void changePerspective(const D& multiplier, const DP& axis);
 
-	} camera;
+	} cameraSimulator, cameraEditor;
 
 	Physics physicsEngine;
 
 public:
 	void createWindow();
-	void displayParticle(Particle& p);
-	void displayParticleVector(PV& pv);	//const ?
+	void displayParticle(const Particle& p);
+	void displayParticle(const Particle& p, const Camera& camera);
+	void displayParticleVector(const PV& pv);	//const ?
 	void displayImGUI();
 	void runSimulator();
 	void runEditor();

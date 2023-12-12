@@ -20,11 +20,11 @@ void GUI::Camera::init(SDL_Window* window) {
 	//windowCenter = { windowSize.x/2.0, windowSize.y/2.0 };		//check if conversion ok
 }
 
-DP GUI::Camera::world2Window(const DP& dp) {
+DP GUI::Camera::world2Window(const DP& dp) const {
 	return ( dp - pos ) * zoom;
 	//return dp * zoom - pos;
 }
-DP GUI::Camera::window2World(const DP& dp) {
+DP GUI::Camera::window2World(const DP& dp) const {
 	return ( dp / zoom + pos ) ;
 	//return (dp + pos) / zoom;
 }
@@ -64,14 +64,15 @@ void GUI::Camera::changePerspective(const D& multiplier, const DP& dp) {
 void GUI::createWindow() {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-	camera.setWindowSize( { DEFAULT_WIDTH, DEFAULT_HEIGHT } );
+	cameraSimulator.setWindowSize( { DEFAULT_WIDTH, DEFAULT_HEIGHT } );
+	cameraEditor.setWindowSize({ DEFAULT_WIDTH, DEFAULT_HEIGHT });
 
 	mainWindow = SDL_CreateWindow(
 		"Particle Simulator",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		(int)camera.getWindowSize().x,
-		(int)camera.getWindowSize().y,
+		(int)cameraSimulator.getWindowSize().x,
+		(int)cameraSimulator.getWindowSize().y,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	mainRenderer = SDL_CreateRenderer(mainWindow, -1, SDL_RENDERER_ACCELERATED);
 	SDL_GLContext glContext = SDL_GL_CreateContext(mainWindow);
@@ -85,11 +86,11 @@ void GUI::createWindow() {
 	glDepthFunc(GL_LEQUAL);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-	glViewport(0, 0, (GLsizei)camera.getWindowSize().x, (GLsizei)camera.getWindowSize().y);
+	glViewport(0, 0, (GLsizei)cameraSimulator.getWindowSize().x, (GLsizei)cameraSimulator.getWindowSize().y);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	glOrtho(0, camera.getWindowSize().x, camera.getWindowSize().y, 0, 0, 1000);
+	glOrtho(0, cameraSimulator.getWindowSize().x, cameraSimulator.getWindowSize().y, 0, 0, 1000);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
@@ -116,7 +117,22 @@ void GUI::removeWindow() {
 	SDL_Quit();
 
 }
-void GUI::displayParticle(Particle& p) {
+void GUI::displayParticle(const Particle& p) {
+	glColor4ub((const GLubyte)p.getColor().str.r,
+		(const GLubyte)p.getColor().str.g,
+		(const GLubyte)p.getColor().str.b,
+		(const GLubyte)p.getColor().str.a);
+
+	glBegin(GL_POLYGON);							//draw Particle vertexes
+	for (auto& v : p.getShape()) {
+		glVertex2d(
+			cameraSimulator.world2Window(v + p.getPos()).x,
+			cameraSimulator.world2Window(v + p.getPos()).y
+		);
+	}
+	glEnd();
+}
+void GUI::displayParticle(const Particle& p, const Camera& camera) {
 	glColor4ub((const GLubyte)p.getColor().str.r,
 		(const GLubyte)p.getColor().str.g,
 		(const GLubyte)p.getColor().str.b,
@@ -131,7 +147,7 @@ void GUI::displayParticle(Particle& p) {
 	}
 	glEnd();
 }
-void GUI::displayParticleVector(PV& pv) {
+void GUI::displayParticleVector(const PV& pv) {
 	glLoadIdentity();
 	for (auto& p : pv) {
 		displayParticle(p);
@@ -163,7 +179,15 @@ void GUI::displayImGUI() {
 		}
 		if (BeginMenu("Edytuj")) {
 			if (MenuItem("Edytor czastek", NULL, showEditor, true)) showEditor = !showEditor;
+			if (showEditor && MenuItem("Resetuj czastke", NULL, false, true)) placedParticle = Particle({ 0.0, 0.0 });
+			if (showEditor && MenuItem("Resetuj perspektywe", NULL, false, true)) {
+				cameraEditor.setPos(cameraEditor.getWindowSize()/(-2.0));
+				//cameraEditor.getWindowSize() / 2.0;
+				cameraEditor.setZoom(1.0);
+			}
 
+
+			SeparatorText("##");
 			MenuItem("Sel1 En1", NULL, true, true);
 			MenuItem("Sel1 En0", NULL, true, false);
 			MenuItem("Sel0 En1", NULL, false, true);
@@ -182,10 +206,10 @@ void GUI::runSimulator() {
 
 	//physicsEngine.runPhysicsIteration();
 	if (mouse.scrolled) {
-		camera.changePerspective(mouse.scrollY > 0 ? 1.1 : .9, mouse.pos);
+		cameraSimulator.changePerspective(mouse.scrollY > 0 ? 1.1 : .9, mouse.pos);
 	}
 	if (mouse.lClick) {
-		placedParticle = Particle(camera.window2World(mouse.pos));
+		placedParticle = Particle(cameraSimulator.window2World(mouse.pos));
 		physicsEngine.addParticle(
 			placedParticle
 		);
@@ -196,12 +220,21 @@ void GUI::runSimulator() {
 void GUI::runEditor() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	Camera cameraOld = camera;
-	camera.setPos(placedParticle.getPos() - camera.getWindowSize()/2.0);
-	camera.setZoom(1.0);
+	if (mouse.scrolled) {
+		cameraEditor.changePerspective(mouse.scrollY > 0 ? 1.1 : .9, mouse.pos);
+	}
+	if (mouse.lClick) {
+		//placedParticle = Particle(cameraSimulator.window2World(mouse.pos));
+		//physicsEngine.addParticle(
+		//	placedParticle
+		//);
+	};
 
-	displayParticle(placedParticle);
-	camera = cameraOld;
+	//cameraEditor.setZoom(1.0);
+	//cameraEditor.setPos(placedParticle.getPos() - cameraEditor.getWindowSize()/2.0);
+	
+
+	displayParticle(placedParticle, cameraEditor);
 }
 
 void GUI::run() {
@@ -219,12 +252,12 @@ void GUI::run() {
 				break;
 			case SDL_WINDOWEVENT:
 				if (evt.window.event == SDL_WINDOWEVENT_RESIZED) {
-					camera.setWindowSize({(D)evt.window.data1, (D)evt.window.data2 });
+					cameraSimulator.setWindowSize({(D)evt.window.data1, (D)evt.window.data2 });
 
-					glViewport(0, 0, (GLsizei)camera.getWindowSize().x, (GLsizei)camera.getWindowSize().y);
+					glViewport(0, 0, (GLsizei)cameraSimulator.getWindowSize().x, (GLsizei)cameraSimulator.getWindowSize().y);
 					glMatrixMode(GL_PROJECTION);
 					glLoadIdentity();
-					glOrtho(0, camera.getWindowSize().x, camera.getWindowSize().y, 0, 0, 1000);
+					glOrtho(0, cameraSimulator.getWindowSize().x, cameraSimulator.getWindowSize().y, 0, 0, 1000);
 					glMatrixMode(GL_MODELVIEW);
 				}
 				break;
@@ -263,16 +296,16 @@ void GUI::run() {
 				if (!io.WantCaptureKeyboard)
 				switch (evt.key.keysym.sym) {
 				case SDLK_UP:
-					camera.moveProportional({ 0.0, -0.1 });
+					cameraSimulator.moveProportional({ 0.0, -0.1 });
 					break;
 				case SDLK_DOWN:
-					camera.moveProportional({ 0.0, 0.1 });
+					cameraSimulator.moveProportional({ 0.0, 0.1 });
 					break;
 				case SDLK_LEFT:
-					camera.moveProportional({-0.1, 0.0});
+					cameraSimulator.moveProportional({-0.1, 0.0});
 					break;
 				case SDLK_RIGHT:
-					camera.moveProportional({ 0.1, 0.0 });
+					cameraSimulator.moveProportional({ 0.1, 0.0 });
 					break;
 				}
 				break;
