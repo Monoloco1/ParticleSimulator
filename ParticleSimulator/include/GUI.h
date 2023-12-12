@@ -34,11 +34,20 @@ protected:
 	SDL_Window* mainWindow{};
 	SDL_Renderer* mainRenderer{};
 	SDL_Event evt{};
+	struct {
+		DP pos;					//mouse position DP
+		bool lClick{}, rClick{}, scrolled{};
+		D scrollX{};			//wheel scroll, positive for right
+		D scrollY{};			//wheel scroll, positive for up
+	} mouse;
 
 	ImGuiIO io{};
-	bool showEditor{};
 
-	class camera {
+	bool showEditor{};
+	Particle placedParticle = Particle({0.0, 0.0});	//this Particle will be placed next, can be changed in the editor
+	float placedParticleScale{};
+
+	class Camera {
 	private:
 		//SDL_Window* window{};
 		DP pos;		//camera center position in the world
@@ -71,6 +80,8 @@ public:
 	void displayParticle(Particle& p);
 	void displayParticleVector(PV& pv);	//const ?
 	void displayImGUI();
+	void runSimulator();
+	void runEditor();
 	void run();
 	void removeWindow();
 };

@@ -14,48 +14,48 @@
 #include "GUI.h"
 #include <string>
 
-void GUI::camera::init(SDL_Window* window) {
+void GUI::Camera::init(SDL_Window* window) {
 	
 	//SDL_GetWindowBordersSize(window, &top, &left, &bottom, &right);
 	//windowCenter = { windowSize.x/2.0, windowSize.y/2.0 };		//check if conversion ok
 }
 
-DP GUI::camera::world2Window(const DP& dp) {
+DP GUI::Camera::world2Window(const DP& dp) {
 	return ( dp - pos ) * zoom;
 	//return dp * zoom - pos;
 }
-DP GUI::camera::window2World(const DP& dp) {
+DP GUI::Camera::window2World(const DP& dp) {
 	return ( dp / zoom + pos ) ;
 	//return (dp + pos) / zoom;
 }
 
-DP GUI::camera::getPos() {
+DP GUI::Camera::getPos() {
 	return pos;
 }
-void GUI::camera::setPos(const DP& newPos) {
+void GUI::Camera::setPos(const DP& newPos) {
 	pos = newPos;
 }
-D GUI::camera::getZoom() {
+D GUI::Camera::getZoom() {
 	return zoom;
 }
-void GUI::camera::setZoom(const D& newZoom) {
+void GUI::Camera::setZoom(const D& newZoom) {
 	zoom = newZoom;
 }
-DP GUI::camera::getWindowSize() {
+DP GUI::Camera::getWindowSize() {
 	return windowSize;
 }
-void GUI::camera::setWindowSize(const DP& newWindowSize) {
+void GUI::Camera::setWindowSize(const DP& newWindowSize) {
 	windowSize = newWindowSize;
 }
 
-D GUI::camera::multiplyZoom(const D& multiplier) {
+D GUI::Camera::multiplyZoom(const D& multiplier) {
 	zoom *= multiplier;
 	return zoom;
 }
-void GUI::camera::moveProportional(const DP& XY) {
+void GUI::Camera::moveProportional(const DP& XY) {
 	pos = pos + XY / zoom * std::min(windowSize.x, windowSize.y);
 }
-void GUI::camera::changePerspective(const D& multiplier, const DP& dp) {
+void GUI::Camera::changePerspective(const D& multiplier, const DP& dp) {
 	DP scaleFactor = { windowSize.x * (dp.x/windowSize.x*2.0), windowSize.y * (dp.y / windowSize.y * 2.0) };
 	pos = pos + scaleFactor / 20.0 / zoom / multiplier * (multiplier >= 1.0 ? 1.0 : -1.0);
 	zoom *= multiplier;
@@ -141,6 +141,7 @@ void GUI::displayParticleVector(PV& pv) {
 
 void GUI::displayImGUI() {
 	using ImGui::BeginMainMenuBar, ImGui::MenuItem, ImGui::BeginMenu, ImGui::SeparatorText, ImGui::EndMenu, ImGui::EndMainMenuBar, ImGui::Begin, ImGui::End;
+	using ImGui::Button;
 
 	ImGui_ImplOpenGL2_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
@@ -174,26 +175,38 @@ void GUI::displayImGUI() {
 		EndMainMenuBar();
 	}
 
-	if (showEditor && Begin("Edytor czastek", &showEditor)) {
+}
 
-		End();
+void GUI::runSimulator() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//physicsEngine.runPhysicsIteration();
+	if (mouse.scrolled) {
+		camera.changePerspective(mouse.scrollY > 0 ? 1.1 : .9, mouse.pos);
 	}
+	if (mouse.lClick) {
+		placedParticle = Particle(camera.window2World(mouse.pos));
+		physicsEngine.addParticle(
+			placedParticle
+		);
+	};
+	displayParticleVector(physicsEngine.getParticles());
+}
 
-	
+void GUI::runEditor() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	Camera cameraOld = camera;
+	camera.setPos(placedParticle.getPos() - camera.getWindowSize()/2.0);
+	camera.setZoom(1.0);
+
+	displayParticle(placedParticle);
+	camera = cameraOld;
 }
 
 void GUI::run() {
 	bool running{ true };
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-	struct {
-		DP pos;					//mouse position DP
-		bool lClick{}, rClick{}, scrolled{};
-		D scrollX{};			//wheel scroll, positive for right
-		D scrollY{};			//wheel scroll, positive for up
-	} mouse;
-
-	Particle testPart;
 
 	while(running) {
 		while ( SDL_PollEvent(&evt) ) {
@@ -282,19 +295,9 @@ void GUI::run() {
 		// Start the Dear ImGui frame
 		displayImGUI();
 		
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		//physicsEngine.runPhysicsIteration();
-		if (mouse.scrolled) {
-			camera.changePerspective( mouse.scrollY>0? 1.1 : .9, mouse.pos );
-		}
-		if (mouse.lClick) {
-			testPart = Particle(camera.window2World(mouse.pos));
-			physicsEngine.addParticle(
-				testPart
-			);
-		};
-		displayParticleVector(physicsEngine.getParticles());
+		if (showEditor)
+			runEditor();
+		else runSimulator();
 
 		//	draw the imGUI
 		ImGui::Render();
