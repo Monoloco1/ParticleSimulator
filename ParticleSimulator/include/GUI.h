@@ -34,7 +34,9 @@ protected:
 	SDL_Window* mainWindow{};
 	SDL_Renderer* mainRenderer{};
 	SDL_Event evt{};
+
 	ImGuiIO io{};
+	bool showEditor{};
 
 	class camera {
 	private:

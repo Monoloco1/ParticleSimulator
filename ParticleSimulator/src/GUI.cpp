@@ -140,7 +140,7 @@ void GUI::displayParticleVector(PV& pv) {
 }
 
 void GUI::displayImGUI() {
-	using ImGui::BeginMainMenuBar, ImGui::MenuItem, ImGui::BeginMenu, ImGui::SeparatorText, ImGui::EndMenu, ImGui::EndMainMenuBar;
+	using ImGui::BeginMainMenuBar, ImGui::MenuItem, ImGui::BeginMenu, ImGui::SeparatorText, ImGui::EndMenu, ImGui::EndMainMenuBar, ImGui::Begin, ImGui::End;
 
 	ImGui_ImplOpenGL2_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
@@ -149,20 +149,20 @@ void GUI::displayImGUI() {
 	const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(100, 100), ImGuiCond_FirstUseEver);
-
-	if (BeginMainMenuBar()) {
+	
+	if ( BeginMainMenuBar() ) {
 		if (BeginMenu("Plik")) {
-			if (MenuItem("Menu Bar 1", NULL, 1)) std::cout << "elo";;
+			if (MenuItem("Restart symulacji", NULL, false)) std::cout << "restart";
 
-			SeparatorText("Separator 1");
-			MenuItem("Test1", NULL, 1);
+			SeparatorText("##");
+			if (MenuItem("Zakoncz program", NULL, false)) std::cout << "koniec";
 
-			SeparatorText("Separator 2");
-			MenuItem("Test2", NULL, 1);
-
+			
 			EndMenu();
 		}
 		if (BeginMenu("Edytuj")) {
+			if (MenuItem("Edytor czastek", NULL, showEditor, true)) showEditor = !showEditor;
+
 			MenuItem("Sel1 En1", NULL, true, true);
 			MenuItem("Sel1 En0", NULL, true, false);
 			MenuItem("Sel0 En1", NULL, false, true);
@@ -173,6 +173,13 @@ void GUI::displayImGUI() {
 
 		EndMainMenuBar();
 	}
+
+	if (showEditor && Begin("Edytor czastek", &showEditor)) {
+
+		End();
+	}
+
+	
 }
 
 void GUI::run() {
@@ -180,7 +187,7 @@ void GUI::run() {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	struct {
-		DP pos;	//mouse position DP
+		DP pos;					//mouse position DP
 		bool lClick{}, rClick{}, scrolled{};
 		D scrollX{};			//wheel scroll, positive for right
 		D scrollY{};			//wheel scroll, positive for up
@@ -192,12 +199,12 @@ void GUI::run() {
 		while ( SDL_PollEvent(&evt) ) {
 			ImGui_ImplSDL2_ProcessEvent(&evt);
 			ImGuiIO& io = ImGui::GetIO();
+
 			switch (evt.type) {
 			case SDL_QUIT:
 				running = false;
 				break;
 			case SDL_WINDOWEVENT:
-
 				if (evt.window.event == SDL_WINDOWEVENT_RESIZED) {
 					camera.setWindowSize({(D)evt.window.data1, (D)evt.window.data2 });
 
