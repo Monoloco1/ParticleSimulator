@@ -94,6 +94,31 @@ bool Physics::collisionDetect(const int& p1, const int& p2, D& offsetX, D& offse
 	return false;
 }
 
+/*	hoverDetect(Particle& p, DP& pos)
+|	hoverDetect(int& p1, DP& pos)
+|-----------------------------------
+|	This function detects if Particle is "hovered" by point, ie. mouse
+|-----------------------------------
+|	INPUT: Particle & pos
+|-----------------------------------
+|	OUTPUT: boolean true if hovered
+*/
+bool Physics::hoverDetect(const Particle& p, const DP& pos) {
+	if (p.getPos().x + p.getBB().w < pos.x) return false;
+	else if (p.getPos().x + p.getBB().e > pos.x) return false;
+	else if (p.getPos().y + p.getBB().s < pos.y) return false;
+	else if (p.getPos().y + p.getBB().n > pos.y) return false;
+	else return true;
+}
+bool Physics::hoverDetect(const int& p, const DP& pos) {
+	assert(p < particles.size() && p >= 0);
+	if (particles.at(p).getPos().x + particles.at(p).getBB().w < pos.x) return false;
+	else if (particles.at(p).getPos().x + particles.at(p).getBB().e > pos.x) return false;
+	else if (particles.at(p).getPos().y + particles.at(p).getBB().s < pos.y) return false;
+	else if (particles.at(p).getPos().y + particles.at(p).getBB().n > pos.y) return false;
+	else return true;
+}
+
 /*	runPhysicsIteration()
 |-----------------------------------
 |	This function applies the collision detection/reaction function to every pair of particles

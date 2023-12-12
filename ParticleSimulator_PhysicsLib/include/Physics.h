@@ -38,6 +38,8 @@ public:
 	void collisionReaction(const int& p1, const int& p2, const D& offsetX, const D& offsetY);
 	bool collisionDetect(const Particle& p1, const Particle& p2, D& offsetX, D& offsetY);
 	bool collisionDetect(const int& p1, const int& p2, D& offsetX, D& offsetY);
+	bool hoverDetect(const Particle& p, const DP& pos);
+	bool hoverDetect(const int& p, const DP& pos);
 	void runPhysicsIteration();
 	
 
