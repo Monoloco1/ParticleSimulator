@@ -84,6 +84,8 @@ public:
 	void setPos(const DP& newPos);
 	DP getVel() const;
 	void setVel(const DP& newVel);
+	BB getBB() const;
+	void setBB(const BB& newBB);
 	void setColor(const prt::Color newCol);
 	prt::Color getColor() const;
 	void setShape(const DPV& newShape);

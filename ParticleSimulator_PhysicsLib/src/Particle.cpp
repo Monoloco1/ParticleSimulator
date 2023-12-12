@@ -58,6 +58,30 @@ void Particle::setVel(const DP& newVel) {
 	vel = newVel;
 }
 
+/*	getBB()
+|-----------------------------------
+|	This function returns the vel struct of the Particle
+|-----------------------------------
+|	INPUT: void
+|-----------------------------------
+|	OUTPUT: DP vel
+*/
+BB Particle::getBB() const {
+	return bb;
+}
+
+/*	setVel( DP& newVel )
+|-----------------------------------
+|	This function sets the Particle's vel to newVel
+|-----------------------------------
+|	INPUT: new vel struct
+|-----------------------------------
+|	OUTPUT: void
+*/
+void Particle::setBB(const BB& newBB) {
+	bb = newBB;
+}
+
 /*	getCol()
 |-----------------------------------
 |	This function returns the col prt::Color of the Particle
