@@ -57,7 +57,7 @@ TEST(ParticlePhysics_Tests, hoverDetection_test) {
 	Physics testPhysics;
 
 	//Initialize test Particles
-	Particle testParticle1({ 0.0, 0.0 });
+	Particle testParticle1({ 0.0, 0.0 }, { 0.0, 0.0 }, 0.0, prt::Red, {-10.0, 10.0, 10.0, -10.0}, DPV());
 	testPhysics.addParticle(testParticle1);
 	ASSERT_TRUE(testPhysics.hoverDetect(0, {0.0, 0.0}));
 	ASSERT_FALSE(testPhysics.hoverDetect(0, { 50.0, 0.0 }));

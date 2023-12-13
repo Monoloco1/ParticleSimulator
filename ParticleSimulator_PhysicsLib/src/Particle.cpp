@@ -172,7 +172,7 @@ Particle::Particle(const DP& pos) :
 	vel = DP( 0.0, 0.0 );
 	mass = 1.1;
 	col = prt::Red;
-	bb.n = -10.0; bb.s = 10.0; bb.e = 10.0; bb.w = -10.0;
+	bb.n = -10.0; bb.s = 10.0; bb.e = -10.0; bb.w = 10.0;
 	shape = {
 		DP(10.0, 0.0),
 		DP(7.0, 7.0),

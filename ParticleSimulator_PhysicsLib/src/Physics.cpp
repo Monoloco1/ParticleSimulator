@@ -109,8 +109,8 @@ void Physics::collisionReaction(const int& p1, const int& p2, const D& offsetX, 
 */
 bool Physics::collisionDetect(const Particle& p1, const Particle& p2, D& offsetX, D& offsetY) {
 	
-	if (p1.getPos().x + p1.getBB().e < p2.getPos().x + p2.getBB().w) return false;
-	else if (p1.getPos().x + p1.getBB().w > p2.getPos().x + p2.getBB().e) return false;
+	if (p1.getPos().x + p1.getBB().w < p2.getPos().x + p2.getBB().e) return false;
+	else if (p1.getPos().x + p1.getBB().e > p2.getPos().x + p2.getBB().w) return false;
 	else if (p1.getPos().y + p1.getBB().s < p2.getPos().y + p2.getBB().n) return false;
 	else if (p1.getPos().y + p1.getBB().n > p2.getPos().y + p2.getBB().s) return false;
 
@@ -130,7 +130,7 @@ bool Physics::collisionDetect(const int& p1, const int& p2, D& offsetX, D& offse
 |-----------------------------------
 |	This function detects if Particle is "hovered" by point, ie. mouse
 |-----------------------------------
-|	INPUT: Particle & pos
+|	INPUT: Particle & pos(mouse.pos in world coords)
 |-----------------------------------
 |	OUTPUT: boolean true if hovered
 */
