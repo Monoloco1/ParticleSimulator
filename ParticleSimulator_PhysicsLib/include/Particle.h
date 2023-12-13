@@ -91,6 +91,8 @@ public:
 	prt::Color getColor() const;
 	void setShape(const DPV& newShape);
 	DPV getShape() const;
+	void setMass(const D& newMass);
+	D getMass() const;
 	void setSize(const D& newSize);
 
 	

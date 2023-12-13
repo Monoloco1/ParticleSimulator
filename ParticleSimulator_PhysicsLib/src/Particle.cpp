@@ -142,6 +142,13 @@ DPV Particle::getShape() const {
 	return shape;
 }
 
+void Particle::setMass(const D& newMass) {
+	mass = newMass;
+}
+D Particle::getMass() const {
+	return mass;
+}
+
 void Particle::setSize(const D& newSize) {
 	bb.e *= newSize;
 	bb.w *= newSize;
