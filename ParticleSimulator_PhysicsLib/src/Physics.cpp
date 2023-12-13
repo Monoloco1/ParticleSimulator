@@ -55,6 +55,16 @@ Particle Physics::getParticles(const int& index) {
 	return particles[index];
 }
 
+DP Physics::getParticleVel(const int& index) const {
+	assert(index >= 0 && index < (signed)particles.size());
+	return particles.at(index).getVel();
+}
+void Physics::setParticleVel(const int& index, const DP& newVel) {
+	assert(index >= 0 && index < (signed)particles.size());
+	particles.at(index).setVel(newVel);
+}
+
+
 DP Physics::getGravity() const {
 	return gravity;
 }
@@ -77,8 +87,8 @@ void Physics::setGravityBool(const bool& newGravityBool) {
 |	OUTPUT: void
 */
 void Physics::collisionReaction(Particle& p1, Particle& p2, const D& offsetX, const D& offsetY) {
-	p1.setColor(prt::Red);
-	p2.setColor(prt::Red);
+	p1.setColor(prt::White);
+	p2.setColor(prt::White);
 }
 void Physics::collisionReaction(const int& p1, const int& p2, const D& offsetX, const D& offsetY) {
 	assert(p1 >= 0 && p1 < (signed)particles.size());
@@ -98,13 +108,21 @@ void Physics::collisionReaction(const int& p1, const int& p2, const D& offsetX, 
 |			distances in X,Y dims between centers of Particles(change referenced D's)
 */
 bool Physics::collisionDetect(const Particle& p1, const Particle& p2, D& offsetX, D& offsetY) {
-	//if( p1.getPos().x - p1.)
-	return false;
+	
+	if (p1.getPos().x + p1.getBB().e < p2.getPos().x + p2.getBB().w) return false;
+	else if (p1.getPos().x + p1.getBB().w > p2.getPos().x + p2.getBB().e) return false;
+	else if (p1.getPos().y + p1.getBB().s < p2.getPos().y + p2.getBB().n) return false;
+	else if (p1.getPos().y + p1.getBB().n > p2.getPos().y + p2.getBB().s) return false;
+
+	return true;
 }
 bool Physics::collisionDetect(const int& p1, const int& p2, D& offsetX, D& offsetY) {
 	assert( p1 >= 0 && p1 < (signed)particles.size() );
 	assert( p2 >= 0 && p2 < (signed)particles.size() );
-	return false;
+
+	return collisionDetect(particles[p1], particles[p2], offsetX, offsetY);
+
+	//return false;
 }
 
 /*	hoverDetect(Particle& p, DP& pos)
@@ -125,11 +143,9 @@ bool Physics::hoverDetect(const Particle& p, const DP& pos) {
 }
 bool Physics::hoverDetect(const int& p, const DP& pos) {
 	assert(p >= 0 && p < (signed)particles.size());
-	if (particles.at(p).getPos().x + particles.at(p).getBB().w < pos.x) return false;
-	else if (particles.at(p).getPos().x + particles.at(p).getBB().e > pos.x) return false;
-	else if (particles.at(p).getPos().y + particles.at(p).getBB().s < pos.y) return false;
-	else if (particles.at(p).getPos().y + particles.at(p).getBB().n > pos.y) return false;
-	else return true;
+	
+	return hoverDetect(particles[p], pos);
+
 }
 
 /*	runPhysicsIteration()

@@ -34,6 +34,8 @@ public:
 	void setParticles(const PV& newParticles);
 	PV getParticles();
 	Particle getParticles(const int& index);
+	DP getParticleVel(const int& index) const;
+	void setParticleVel(const int& index, const DP& newVel);
 
 	DP getGravity() const;
 	void setGravity(const DP& newGravity);
