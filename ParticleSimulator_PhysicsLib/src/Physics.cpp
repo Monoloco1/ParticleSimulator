@@ -91,10 +91,11 @@ D Physics::distanceBetween(const DP& p1, const DP& p2) const {
 |-----------------------------------
 |	OUTPUT: void
 */
-void Physics::collisionReaction(Particle& p1, Particle& p2, const D& offsetX, const D& offsetY) {
+void Physics::collisionReaction(Particle& p1, Particle& p2, const DP& offset) {
 	p1.setColor(prt::White);
 	p2.setColor(prt::White);
 
+	//	The code below is inspired on an older project of Cristian Niwelt
 	D angle = atan2(p1.getPos().y - p2.getPos().y, p1.getPos().x - p2.getPos().x);
 	D normalMomentumI = 1.0 * p1.getMass() * (cos(angle) * p1.getVel().x + sin(angle) * p1.getVel().y);
 	D normalMomentumJ = 1.0 * p2.getMass() * (cos(angle) * p2.getVel().x + sin(angle) * p2.getVel().y);
@@ -106,7 +107,11 @@ void Physics::collisionReaction(Particle& p1, Particle& p2, const D& offsetX, co
 		p2.getVel().x + normalMomentumI * cos(angle) / p2.getMass() - normalMomentumJ * cos(angle) / p2.getMass(),
 		p2.getVel().y + normalMomentumI * sin(angle) / p2.getMass() - normalMomentumJ * sin(angle) / p2.getMass()
 		});
-	D distBalls = distanceBetween(p1.getPos(), p2.getPos());
+
+	p1.setPos(p1.getPos() - offset/2.0);
+	p1.setPos(p2.getPos() + offset/2.0);
+
+	//D distBalls = distanceBetween(p1.getPos(), p2.getPos());
 	//distBalls = (p1.r + p2.r - distBalls) / 2;
 	//distBalls = max(distBalls, 0.0001f);
 	//p1.getPos().x += cos(angle) * distBalls;
@@ -139,10 +144,10 @@ void Physics::collisionReaction(Particle& p1, Particle& p2, const D& offsetX, co
 			}
 			*/
 }
-void Physics::collisionReaction(const int& p1, const int& p2, const D& offsetX, const D& offsetY) {
+void Physics::collisionReaction(const int& p1, const int& p2, const DP& offset) {
 	assert(p1 >= 0 && p1 < (signed)particles.size());
 	assert(p2 >= 0 && p2 < (signed)particles.size());
-	collisionReaction(particles.at(p1), particles.at(p2), offsetX, offsetY);
+	collisionReaction(particles.at(p1), particles.at(p2), offset);
 }
 
 /*	collisionDetect(Particle& p1, Particle& p2, D& offsetX, D& offsetY)
@@ -155,20 +160,39 @@ void Physics::collisionReaction(const int& p1, const int& p2, const D& offsetX, 
 |	OUTPUT: boolean true if they collide
 |			distances in X,Y dims between centers of Particles(change referenced D's)
 */
-bool Physics::collisionDetect(const Particle& p1, const Particle& p2, D& offsetX, D& offsetY) {
-	
+bool Physics::collisionDetect(const Particle& p1, const Particle& p2, DP& offset) {
+	//	Check if particles are colliding
 	if (p1.getPos().x + p1.getBB().w < p2.getPos().x + p2.getBB().e) return false;
 	else if (p1.getPos().x + p1.getBB().e > p2.getPos().x + p2.getBB().w) return false;
 	else if (p1.getPos().y + p1.getBB().s < p2.getPos().y + p2.getBB().n) return false;
 	else if (p1.getPos().y + p1.getBB().n > p2.getPos().y + p2.getBB().s) return false;
 
+	//	Calculate offset( by how much the particles overlay)
+	//DP overlay1{}, overlay2{};
+	/*
+	pos1 + {w, s}   - pos2 + {e, n}
+	pos1 + {e, n}
+	*/
+	//overlay1 = p1.getPos() + DP(p1.getBB().w, p1.getBB().s) - (p2.getPos() + DP(p2.getBB().e, p2.getBB().n));
+	//overlay1 = p1.getPos() + DP(p1.getBB().w, p1.getBB().s) - (p2.getPos() + DP(p2.getBB().e, p2.getBB().n));
+
+	//	Calculate offset in each direction
+	D overlay1w2e = p1.getPos().x + p1.getBB().w - (p2.getPos().x + p2.getBB().e);
+	D overlay2w1e = p2.getPos().x + p2.getBB().w - (p1.getPos().x + p1.getBB().e);
+	D overlay1s2n = p1.getPos().y + p1.getBB().s - (p2.getPos().y + p2.getBB().n);
+	D overlay2s1n = p2.getPos().y + p2.getBB().s - (p1.getPos().y + p1.getBB().n);
+
+	//	Select the biggest one ?
+	offset.x = overlay1w2e > overlay2w1e ? overlay1w2e : -overlay2w1e;
+	offset.y = overlay1s2n > overlay2s1n ? overlay1s2n : -overlay2s1n;
+
 	return true;
 }
-bool Physics::collisionDetect(const int& p1, const int& p2, D& offsetX, D& offsetY) {
+bool Physics::collisionDetect(const int& p1, const int& p2, DP& offset) {
 	assert( p1 >= 0 && p1 < (signed)particles.size() );
 	assert( p2 >= 0 && p2 < (signed)particles.size() );
 
-	return collisionDetect(particles[p1], particles[p2], offsetX, offsetY);
+	return collisionDetect(particles[p1], particles[p2], offset);
 
 	//return false;
 }
@@ -206,7 +230,7 @@ bool Physics::hoverDetect(const int& p, const DP& pos) {
 |	OUTPUT: void
 */
 void Physics::runPhysicsIteration() {
-	D offX{}, offY{};
+	DP offset{};
 
 	//	Apply gravity acceleration
 	if(getGravityBool())
@@ -227,8 +251,8 @@ void Physics::runPhysicsIteration() {
 		for (unsigned i1{ 0 }; i1 < particles.size() - 1; ++i1) {
 
 			for (unsigned i2{ i1+1 }; i2 < particles.size() ; ++i2) {
-				if (collisionDetect(particles[i1], particles[i2], offX, offY)) {
-					collisionReaction(particles[i1], particles[i2], offX, offY);
+				if (collisionDetect(particles[i1], particles[i2], offset)) {
+					collisionReaction(particles[i1], particles[i2], offset);
 				}
 			}
 		}
