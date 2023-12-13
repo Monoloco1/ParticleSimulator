@@ -157,7 +157,7 @@ void GUI::displayParticleVector(const PV& pv) {
 
 void GUI::displayImGUI() {
 	using ImGui::BeginMainMenuBar, ImGui::MenuItem, ImGui::BeginMenu, ImGui::SeparatorText, ImGui::EndMenu, ImGui::EndMainMenuBar, ImGui::Begin, ImGui::End;
-	using ImGui::Button;
+	using ImGui::Button, ImGui::SliderFloat;
 
 	ImGui_ImplOpenGL2_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
@@ -193,11 +193,21 @@ void GUI::displayImGUI() {
 
 
 			SeparatorText("##");
-			if (MenuItem("Grawitacja", NULL, false, true));
+			if (MenuItem("Wlacz grawitacje", NULL, physicsEngine.getGravityBool(), true)) physicsEngine.setGravityBool(!physicsEngine.getGravityBool());
+			float gravityCopiedX = physicsEngine.getGravity().x;
+			float gravityCopiedY = physicsEngine.getGravity().y;
+			bool updateGravity{ false };
+			if (SliderFloat("Grawitacja Y", &gravityCopiedY, -10.0f, 10.0f)) updateGravity = true;
+			if (SliderFloat("Grawitacja X", &gravityCopiedX, -10.0f, 10.0f)) updateGravity = true;
+			if (updateGravity) physicsEngine.setGravity({ static_cast<D>(gravityCopiedX), static_cast<D>(gravityCopiedY)});
+
+					
+
 			MenuItem("Sel1 En1", NULL, true, true);
 			MenuItem("Sel1 En0", NULL, true, false);
 			MenuItem("Sel0 En1", NULL, false, true);
 			MenuItem("Sel0 En0", NULL, false, false);
+			
 			EndMenu();
 		}
 		if (MenuItem("Pomoc")) {}

@@ -23,7 +23,8 @@ using PV = vector<Particle>;	//	ParticleVector
 class Physics {
 protected:
 	PV particles{};
-	//map
+	DP gravity{0.0, 1.0};
+	bool gravityBool{ true };
 
 public:
 	void removeParticles(const int& index);
@@ -34,6 +35,11 @@ public:
 	PV getParticles();
 	Particle getParticles(const int& index);
 
+	DP getGravity() const;
+	void setGravity(const DP& newGravity);
+	bool getGravityBool() const;
+	void setGravityBool(const bool& newGravityBool);
+
 	void collisionReaction(Particle& p1, Particle& p2, const D& offsetX, const D& offsetY);
 	void collisionReaction(const int& p1, const int& p2, const D& offsetX, const D& offsetY);
 	bool collisionDetect(const Particle& p1, const Particle& p2, D& offsetX, D& offsetY);
@@ -41,6 +47,8 @@ public:
 	bool hoverDetect(const Particle& p, const DP& pos);
 	bool hoverDetect(const int& p, const DP& pos);
 	void runPhysicsIteration();
+
+	
 	
 
 	Physics() = default;

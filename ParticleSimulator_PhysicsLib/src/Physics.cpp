@@ -55,6 +55,19 @@ Particle Physics::getParticles(const int& index) {
 	return particles[index];
 }
 
+DP Physics::getGravity() const {
+	return gravity;
+}
+void Physics::setGravity(const DP& newGravity) {
+	gravity = newGravity;
+}
+bool Physics::getGravityBool() const {
+	return gravityBool;
+}
+void Physics::setGravityBool(const bool& newGravityBool) {
+	gravityBool = newGravityBool;
+}
+
 /*	collisionReaction(Particle& p1, Particle& p2, D& offsetX, D& offsetY)
 |-----------------------------------
 |	This function applies a reaction function to the colliding particles
@@ -68,8 +81,8 @@ void Physics::collisionReaction(Particle& p1, Particle& p2, const D& offsetX, co
 	p2.setColor(prt::Red);
 }
 void Physics::collisionReaction(const int& p1, const int& p2, const D& offsetX, const D& offsetY) {
-	assert(p1 < particles.size() && p1 >= 0);
-	assert(p2 < particles.size() && p2 >= 0);
+	assert(p1 >= 0 && p1 < (signed)particles.size());
+	assert(p2 >= 0 && p2 < (signed)particles.size());
 	particles.at(p1).setColor(prt::Red);
 	particles.at(p2).setColor(prt::Red);
 }
@@ -89,8 +102,8 @@ bool Physics::collisionDetect(const Particle& p1, const Particle& p2, D& offsetX
 	return false;
 }
 bool Physics::collisionDetect(const int& p1, const int& p2, D& offsetX, D& offsetY) {
-	assert(p1 < particles.size() && p1 >= 0);
-	assert(p2 < particles.size() && p2 >= 0);
+	assert( p1 >= 0 && p1 < (signed)particles.size() );
+	assert( p2 >= 0 && p2 < (signed)particles.size() );
 	return false;
 }
 
@@ -111,7 +124,7 @@ bool Physics::hoverDetect(const Particle& p, const DP& pos) {
 	else return true;
 }
 bool Physics::hoverDetect(const int& p, const DP& pos) {
-	assert(p < particles.size() && p >= 0);
+	assert(p >= 0 && p < (signed)particles.size());
 	if (particles.at(p).getPos().x + particles.at(p).getBB().w < pos.x) return false;
 	else if (particles.at(p).getPos().x + particles.at(p).getBB().e > pos.x) return false;
 	else if (particles.at(p).getPos().y + particles.at(p).getBB().s < pos.y) return false;
@@ -131,25 +144,31 @@ bool Physics::hoverDetect(const int& p, const DP& pos) {
 void Physics::runPhysicsIteration() {
 	D offX{}, offY{};
 
-	for (unsigned i1{ 0 }; i1 < particles.size() - 1; ++i1) {
-		for (unsigned i2{ i1+1 }; i2 < particles.size() ; ++i2) {
-			if (collisionDetect(particles[i1], particles[i2], offX, offY)) {
-				collisionReaction(particles[i1], particles[i2], offX, offY);
-			}
-		}
+	//	Apply gravity acceleration
+	if(getGravityBool())
+		for (auto& p : particles)
+			p.setVel(
+				p.getVel() + gravity
+			);
+
+	//	Apply velocity position change
+	for (auto& p : particles) {
+		p.setPos(
+			p.getPos() + p.getVel()
+		);
 	}
-	/*for (auto it1 = particles.begin(); it1 != particles.end() - 1; ++it1) {
-		for (auto it2 = it1 + 1; it2 != particles.end(); ++it2) {
-			if (collisionDetect(*it1, *it2, offX, offY)) {
-				it1->setColor(prt::Red);
-				it2->setColor(prt::Red);
-			}
-			else {
-				it1->setColor(prt::White);
-				it2->setColor(prt::White);
+
+	//	Apply collision reaction
+	if (particles.size() > 0)
+		for (unsigned i1{ 0 }; i1 < particles.size() - 1; ++i1) {
+
+			for (unsigned i2{ i1+1 }; i2 < particles.size() ; ++i2) {
+				if (collisionDetect(particles[i1], particles[i2], offX, offY)) {
+					collisionReaction(particles[i1], particles[i2], offX, offY);
+				}
 			}
 		}
-	}*/
+
 }
 
 /*	removeParticles( index ); removeParticles(int startIndex, int length)
