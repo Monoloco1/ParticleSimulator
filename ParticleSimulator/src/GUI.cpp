@@ -251,6 +251,26 @@ void GUI::runSimulator() {
 			newParticle
 		);
 	};
+	if (mouse.rPressed) {
+		//	find the hovered particle
+		if (mouse.rClick) {
+			//TODO:	check this
+			for (int p{}; p < physicsEngine.getParticles().size(); ++p) {
+				if (physicsEngine.hoverDetect(p, cameraSimulator.window2World(mouse.pos))) {
+					holdedParticleIndex = p;
+					break;
+				}
+			}
+		}
+		if (holdedParticleIndex > -1) {
+			//	Change the holded particle vel
+			auto deltaVel = mouse.pos - physicsEngine.getParticles(holdedParticleIndex).getPos();
+			deltaVel *= 0.001;
+			physicsEngine.setParticleVel(holdedParticleIndex, deltaVel);
+		}
+	}
+	if (mouse.rUnclick) holdedParticleIndex = -1;
+
 	displayParticleVector(physicsEngine.getParticles());
 }
 
@@ -308,12 +328,27 @@ void GUI::run() {
 					switch (evt.button.button) {
 					case SDL_BUTTON_LEFT:
 						mouse.lClick = true;
+						mouse.lPressed = true;
 						break;
 					case SDL_BUTTON_RIGHT:
 						mouse.rClick = true;
+						mouse.rPressed = true;
 						break;
 					default:
 					break;
+					}
+				break;
+			case SDL_MOUSEBUTTONUP:
+				if (!io.WantCaptureMouse)
+					switch (evt.button.button) {
+					case SDL_BUTTON_LEFT:
+						mouse.lPressed = false;
+						break;
+					case SDL_BUTTON_RIGHT:
+						mouse.rPressed = false;
+						break;
+					default:
+						break;
 					}
 				break;
 			case SDL_MOUSEWHEEL:

@@ -36,7 +36,9 @@ protected:
 	SDL_Event evt{};
 	struct {
 		DP pos;					//mouse position DP
-		bool lClick{}, rClick{}, scrolled{};
+		// Click - change to pressed; Unclick - change to unpressed; Pressed - is holded down
+		bool lClick{}, rClick{}, lUnclick{}, rUnclick{}, lPressed{}, rPressed{};
+		bool scrolled{};
 		D scrollX{};			//wheel scroll, positive for right
 		D scrollY{};			//wheel scroll, positive for up
 	} mouse;
@@ -47,7 +49,9 @@ protected:
 	float placedParticleSizeMultiplier{ 1.0 };
 	bool placedParticleSizeMultiplierApply{ false };
 	Particle placedParticle = Particle({0.0, 0.0});	//this Particle will be placed next, can be changed in the editor
-	//float placedParticleScale{};
+
+	//TODO: maybe change the way the holded particle is stored
+	int holdedParticleIndex = -1;
 
 	class Camera {
 	private:
