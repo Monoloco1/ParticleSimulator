@@ -178,16 +178,22 @@ void GUI::displayImGUI() {
 			EndMenu();
 		}
 		if (BeginMenu("Edytuj")) {
-			if (MenuItem("Edytor czastek", NULL, showEditor, true)) showEditor = !showEditor;
+			if (MenuItem("Edytor czastek", NULL, showEditor, true)) {
+				showEditor = !showEditor;
+				if (showEditor) {
+					cameraEditor.setPos(cameraEditor.getWindowSize() / (-2.0));
+					cameraEditor.setZoom(1.0);
+				}
+			}
 			if (showEditor && MenuItem("Resetuj czastke", NULL, false, true)) placedParticle = Particle({ 0.0, 0.0 });
 			if (showEditor && MenuItem("Resetuj perspektywe", NULL, false, true)) {
 				cameraEditor.setPos(cameraEditor.getWindowSize()/(-2.0));
-				//cameraEditor.getWindowSize() / 2.0;
 				cameraEditor.setZoom(1.0);
 			}
 
 
 			SeparatorText("##");
+			if (MenuItem("Grawitacja", NULL, false, true));
 			MenuItem("Sel1 En1", NULL, true, true);
 			MenuItem("Sel1 En0", NULL, true, false);
 			MenuItem("Sel0 En1", NULL, false, true);
@@ -204,14 +210,15 @@ void GUI::displayImGUI() {
 void GUI::runSimulator() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//physicsEngine.runPhysicsIteration();
+	physicsEngine.runPhysicsIteration();
 	if (mouse.scrolled) {
 		cameraSimulator.changePerspective(mouse.scrollY > 0 ? 1.1 : .9, mouse.pos);
 	}
 	if (mouse.lClick) {
-		placedParticle = Particle(cameraSimulator.window2World(mouse.pos));
+		Particle newParticle = placedParticle;
+		newParticle.setPos(cameraSimulator.window2World(mouse.pos));
 		physicsEngine.addParticle(
-			placedParticle
+			newParticle
 		);
 	};
 	displayParticleVector(physicsEngine.getParticles());
