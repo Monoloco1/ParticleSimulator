@@ -53,6 +53,16 @@ TEST(ParticlePhysics_Tests, collsionDetection_test) {
 	ASSERT_FALSE(testPhysics.collisionDetect(0, 1, offX, offY));
 }
 
+TEST(ParticlePhysics_Tests, hoverDetection_test) {
+	Physics testPhysics;
+
+	//Initialize test Particles
+	Particle testParticle1({ 0.0, 0.0 });
+	testPhysics.addParticle(testParticle1);
+	ASSERT_TRUE(testPhysics.hoverDetect(0, {0.0, 0.0}));
+	ASSERT_FALSE(testPhysics.hoverDetect(0, { 50.0, 0.0 }));
+}
+
 TEST(ParticlePhysics_Tests, collsionReaction_test) {
 	Physics testPhysics;
 
