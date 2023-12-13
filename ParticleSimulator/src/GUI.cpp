@@ -310,6 +310,7 @@ void GUI::run() {
 			case SDL_WINDOWEVENT:
 				if (evt.window.event == SDL_WINDOWEVENT_RESIZED) {
 					cameraSimulator.setWindowSize({(D)evt.window.data1, (D)evt.window.data2 });
+					cameraEditor.setWindowSize({ (D)evt.window.data1, (D)evt.window.data2 });
 
 					glViewport(0, 0, (GLsizei)cameraSimulator.getWindowSize().x, (GLsizei)cameraSimulator.getWindowSize().y);
 					glMatrixMode(GL_PROJECTION);

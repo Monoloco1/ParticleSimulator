@@ -42,6 +42,7 @@ public:
 	bool getGravityBool() const;
 	void setGravityBool(const bool& newGravityBool);
 
+	D distanceBetween(const DP& p1, const DP& p2) const;
 	void collisionReaction(Particle& p1, Particle& p2, const D& offsetX, const D& offsetY);
 	void collisionReaction(const int& p1, const int& p2, const D& offsetX, const D& offsetY);
 	bool collisionDetect(const Particle& p1, const Particle& p2, D& offsetX, D& offsetY);

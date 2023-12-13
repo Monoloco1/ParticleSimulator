@@ -78,6 +78,11 @@ void Physics::setGravityBool(const bool& newGravityBool) {
 	gravityBool = newGravityBool;
 }
 
+D Physics::distanceBetween(const DP& p1, const DP& p2) const {
+	DP deltaPos = p1 - p2;
+	return std::sqrt(deltaPos.x*deltaPos.x + deltaPos.y*deltaPos.y);
+}
+
 /*	collisionReaction(Particle& p1, Particle& p2, D& offsetX, D& offsetY)
 |-----------------------------------
 |	This function applies a reaction function to the colliding particles
@@ -89,12 +94,55 @@ void Physics::setGravityBool(const bool& newGravityBool) {
 void Physics::collisionReaction(Particle& p1, Particle& p2, const D& offsetX, const D& offsetY) {
 	p1.setColor(prt::White);
 	p2.setColor(prt::White);
+
+	D angle = atan2(p1.getPos().y - p2.getPos().y, p1.getPos().x - p2.getPos().x);
+	D normalMomentumI = 1.0 * p1.getMass() * (cos(angle) * p1.getVel().x + sin(angle) * p1.getVel().y);
+	D normalMomentumJ = 1.0 * p2.getMass() * (cos(angle) * p2.getVel().x + sin(angle) * p2.getVel().y);
+	p1.setVel({
+		p1.getVel().x + normalMomentumJ * cos(angle) / p1.getMass() - normalMomentumI * cos(angle) / p1.getMass() ,
+		p1.getVel().y + normalMomentumJ * sin(angle) / p1.getMass() - normalMomentumI * sin(angle) / p1.getMass()
+		} );
+	p2.setVel({
+		p2.getVel().x + normalMomentumI * cos(angle) / p2.getMass() - normalMomentumJ * cos(angle) / p2.getMass(),
+		p2.getVel().y + normalMomentumI * sin(angle) / p2.getMass() - normalMomentumJ * sin(angle) / p2.getMass()
+		});
+	D distBalls = distanceBetween(p1.getPos(), p2.getPos());
+	//distBalls = (p1.r + p2.r - distBalls) / 2;
+	//distBalls = max(distBalls, 0.0001f);
+	//p1.getPos().x += cos(angle) * distBalls;
+	//p1.getPos().y += sin(angle) * distBalls;
+	//p2.getPos().x -= cos(angle) * distBalls;
+	//p2.getPos().y -= sin(angle) * distBalls;
+
+	/*		Code from older project made by Cristian Niwelt
+	for(unsigned int i=0; i<balls.size()-1; i++) {  //ball bounce
+				for(unsigned int j=i+1; j<balls.size(); j++) {
+
+          float distBalls = dist(balls[i].x, balls[i].y, p2.x, balls[j].y);
+					if( distBalls < (balls[i].r+balls[j].r) ) {
+						//cout << "IMPACT\n";
+						float angle=atan2(balls[i].y-balls[j].y, balls[i].x-balls[j].x);
+						float normalMomentumI=BOUNCE_FROM_BALL_ENERGY*balls[i].m*(cos(angle)*balls[i].vx+sin(angle)*balls[i].vy);
+						float normalMomentumJ=BOUNCE_FROM_BALL_ENERGY*balls[j].m*(cos(angle)*balls[j].vx+sin(angle)*balls[j].vy);
+						balls[i].vx+=normalMomentumJ*cos(angle)/balls[i].m-normalMomentumI*cos(angle)/balls[i].m;
+						balls[i].vy+=normalMomentumJ*sin(angle)/balls[i].m-normalMomentumI*sin(angle)/balls[i].m;
+						balls[j].vx+=normalMomentumI*cos(angle)/balls[j].m-normalMomentumJ*cos(angle)/balls[j].m;
+						balls[j].vy+=normalMomentumI*sin(angle)/balls[j].m-normalMomentumJ*sin(angle)/balls[j].m;
+            distBalls = (balls[i].r+balls[j].r-distBalls)/2;
+            distBalls = max(distBalls, 0.0001f);
+            balls[i].x+=cos(angle)*distBalls;
+            balls[i].y+=sin(angle)*distBalls;
+            balls[j].x-=cos(angle)*distBalls;
+            balls[j].y-=sin(angle)*distBalls;
+					}
+				}
+			}
+			*/
 }
 void Physics::collisionReaction(const int& p1, const int& p2, const D& offsetX, const D& offsetY) {
 	assert(p1 >= 0 && p1 < (signed)particles.size());
 	assert(p2 >= 0 && p2 < (signed)particles.size());
-	particles.at(p1).setColor(prt::Red);
-	particles.at(p2).setColor(prt::Red);
+	collisionReaction(particles.at(p1), particles.at(p2), offsetX, offsetY);
 }
 
 /*	collisionDetect(Particle& p1, Particle& p2, D& offsetX, D& offsetY)
