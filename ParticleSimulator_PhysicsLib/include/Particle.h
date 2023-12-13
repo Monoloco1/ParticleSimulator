@@ -11,6 +11,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <algorithm>
 using std::vector;
 
 using D = double;	//	Data
@@ -90,6 +91,7 @@ public:
 	prt::Color getColor() const;
 	void setShape(const DPV& newShape);
 	DPV getShape() const;
+	void setSize(const D& newSize);
 
 	
 	Particle() = default;	// moze do particle.cpp?

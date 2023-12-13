@@ -44,8 +44,10 @@ protected:
 	ImGuiIO io{};
 
 	bool showEditor{};
+	float placedParticleSizeMultiplier{ 1.0 };
+	bool placedParticleSizeMultiplierApply{ false };
 	Particle placedParticle = Particle({0.0, 0.0});	//this Particle will be placed next, can be changed in the editor
-	float placedParticleScale{};
+	//float placedParticleScale{};
 
 	class Camera {
 	private:

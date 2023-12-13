@@ -142,6 +142,20 @@ DPV Particle::getShape() const {
 	return shape;
 }
 
+void Particle::setSize(const D& newSize) {
+	bb.e *= newSize;
+	bb.w *= newSize;
+	bb.n *= newSize;
+	bb.s *= newSize;
+
+	std::transform(shape.begin(), shape.end(), shape.begin(),
+		[newSize](DP dp) {
+			dp.x = dp.x * newSize;
+			dp.y = dp.y * newSize;
+			return dp;
+		} );
+}
+
 /*	Particle( const DP& pos )
 |-----------------------------------
 |	This constructor of the Particle class sets default parameters for all

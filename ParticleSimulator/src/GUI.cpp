@@ -169,12 +169,13 @@ void GUI::displayImGUI() {
 	
 	if ( BeginMainMenuBar() ) {
 		if (BeginMenu("Plik")) {
-			if (MenuItem("Restart symulacji", NULL, false)) std::cout << "restart";
+			if (MenuItem("Restart symulacji", NULL, false))
+				physicsEngine.setParticles(PV());
 
 			SeparatorText("##");
-			if (MenuItem("Zakoncz program", NULL, false)) std::cout << "koniec";
+			if (MenuItem("Zakoncz program", NULL, false))
+				exit(1);
 
-			
 			EndMenu();
 		}
 		if (BeginMenu("Edytuj")) {
@@ -191,6 +192,14 @@ void GUI::displayImGUI() {
 				cameraEditor.setZoom(1.0);
 			}
 
+			//TODO: make the resizing slider usable
+			if (showEditor && SliderFloat("Wielkosc", &placedParticleSizeMultiplier, 0.1f, 10.0f, "%.3f", ImGuiSliderFlags_Logarithmic)) {
+				placedParticleSizeMultiplierApply = true;
+			}
+			else if (placedParticleSizeMultiplierApply) {
+				placedParticleSizeMultiplierApply = false;
+				placedParticle.setSize(placedParticleSizeMultiplier);
+			}
 
 			SeparatorText("##");
 			if (MenuItem("Wlacz grawitacje", NULL, physicsEngine.getGravityBool(), true)) physicsEngine.setGravityBool(!physicsEngine.getGravityBool());
@@ -203,14 +212,25 @@ void GUI::displayImGUI() {
 
 					
 
-			MenuItem("Sel1 En1", NULL, true, true);
-			MenuItem("Sel1 En0", NULL, true, false);
-			MenuItem("Sel0 En1", NULL, false, true);
-			MenuItem("Sel0 En0", NULL, false, false);
+			//MenuItem("Sel1 En1", NULL, true, true);
+			//MenuItem("Sel1 En0", NULL, true, false);
+			//MenuItem("Sel0 En1", NULL, false, true);
+			//MenuItem("Sel0 En0", NULL, false, false);
 			
 			EndMenu();
 		}
-		if (MenuItem("Pomoc")) {}
+		
+		Button("Pomoc") ;
+			if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
+				ImGui::SetTooltip(
+					"Program napisany przez Cristiana Niwelta\n"
+					"Studenta AGH\n\n"
+					"Aby dodać cząstkę, kliknij lewym przyciskiem myszy w wolne miejsce\n"
+					"Aby zmienić kształt cząstkek, wejdź w tryb edytora cząstek: Edytuj>Edytor cząstek"
+
+				);
+			}
+			//EndMenu();
 
 		EndMainMenuBar();
 	}
