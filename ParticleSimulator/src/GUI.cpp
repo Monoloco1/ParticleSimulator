@@ -137,8 +137,8 @@ void GUI::displayParticle(const Particle& p, const Camera& camera) {
 		(const GLubyte)p.getColor().str.g,
 		(const GLubyte)p.getColor().str.b,
 		(const GLubyte)p.getColor().str.a);
-
-	glBegin(GL_POLYGON);							//draw Particle vertexes
+	
+	glBegin(GL_LINE_LOOP);//GL_POLYGON);							//draw Particle vertexes
 	for (auto& v : p.getShape()) {
 		glVertex2d(
 			camera.world2Window(v + p.getPos()).x,
@@ -203,8 +203,8 @@ void GUI::displayImGUI() {
 
 			SeparatorText("##");
 			if (MenuItem("Wlacz grawitacje", NULL, physicsEngine.getGravityBool(), true)) physicsEngine.setGravityBool(!physicsEngine.getGravityBool());
-			float gravityCopiedX = physicsEngine.getGravity().x;
-			float gravityCopiedY = physicsEngine.getGravity().y;
+			float gravityCopiedX = static_cast<D>(physicsEngine.getGravity().x);
+			float gravityCopiedY = static_cast<D>(physicsEngine.getGravity().y);
 			bool updateGravity{ false };
 			if (SliderFloat("Grawitacja Y", &gravityCopiedY, -10.0f, 10.0f)) updateGravity = true;
 			if (SliderFloat("Grawitacja X", &gravityCopiedX, -10.0f, 10.0f)) updateGravity = true;
@@ -264,7 +264,7 @@ void GUI::runSimulator() {
 		}
 		if (holdedParticleIndex > -1) {
 			//	Change the holded particle vel
-			auto deltaVel = mouse.pos - physicsEngine.getParticles(holdedParticleIndex).getPos();
+			auto deltaVel = cameraSimulator.window2World(mouse.pos) - physicsEngine.getParticles(holdedParticleIndex).getPos();
 			deltaVel *= 0.001;
 			physicsEngine.setParticleVel(holdedParticleIndex, deltaVel);
 		}
@@ -274,22 +274,89 @@ void GUI::runSimulator() {
 	displayParticleVector(physicsEngine.getParticles());
 }
 
+void GUI::findClosestVertexesTo(const DPV& shape, const DP& pos, int& index) {
+	//	find closest vertex
+	const auto shapeSize = shape.size();
+	if (shapeSize > 1) {
+		D dist{ PSFunc::distanceBetween(pos, shape.at(0)) };
+		int dp{ 0 };
+		if (shapeSize < 2) {
+			index = dp;
+			return;
+		}
+		else {
+			for (int i{ 1 }; i < shapeSize; ++i) {
+				D distI = PSFunc::distanceBetween(pos, shape.at(i));
+				if (distI < dist) {
+					dist = distI;
+					dp = i;
+				}
+			}
+			index = dp;
+			return;
+		}
+	}
+}
+void GUI::findClosestVertexesTo(const DPV& shape, const DP& pos, int& index1, int& index2) {
+	//	find 2 closest vertexes
+	if (shape.size() > 1) {
+		D dist1{ PSFunc::distanceBetween(pos, shape.at(0)) };
+		D dist2{ PSFunc::distanceBetween(pos, shape.at(1)) };
+		int dp1{ 0 }, dp2{ 1 };
+		if (shape.size() < 3) {
+			index1 = dp1;
+			index2 = dp2;
+			return;
+		} else {
+			for (int i{ 2 }; i < shape.size(); ++i) {
+				D distI = PSFunc::distanceBetween(pos, shape.at(i));
+				if (distI < dist1) {
+					dist2 = dist1;
+					dp2 = dp1;
+					dist1 = distI;
+					dp1 = i;
+				}
+				else if (distI < dist2) {
+					dist2 = distI;
+					dp2 = i;
+				}
+			}
+			index1 = dp1;
+			index2 = dp2;
+			return;
+		}
+	}
+}
+
 void GUI::runEditor() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	//	camera zoom
 	if (mouse.scrolled) {
 		cameraEditor.changePerspective(mouse.scrollY > 0 ? 1.1 : .9, mouse.pos);
 	}
+	//	add vertex
 	if (mouse.lClick) {
-		//placedParticle = Particle(cameraSimulator.window2World(mouse.pos));
-		//physicsEngine.addParticle(
-		//	placedParticle
-		//);
-	};
-
-	//cameraEditor.setZoom(1.0);
-	//cameraEditor.setPos(placedParticle.getPos() - cameraEditor.getWindowSize()/2.0);
-	
+		//int dp1{}, dp2{};
+		int dp{};
+		auto shapeCopy = placedParticle.getShape();
+		//findClosestVertexesTo(shapeCopy, cameraEditor.window2World(mouse.pos) - placedParticle.getPos(), dp1, dp2);
+		findClosestVertexesTo(shapeCopy, cameraEditor.window2World(mouse.pos) - placedParticle.getPos(), dp);
+		//	insert new vertex between two vertexes closest to mouse pos
+		//maybe create insert function in shape struct?
+		//shapeCopy.insert( shapeCopy.begin()+std::max(dp1, dp2), cameraEditor.window2World(mouse.pos)-placedParticle.getPos() );
+		shapeCopy.insert(shapeCopy.begin() + dp, cameraEditor.window2World(mouse.pos) - placedParticle.getPos());
+		placedParticle.setShape(shapeCopy);
+	}
+	//	remove vertex
+	if (mouse.rClick) {
+		if (placedParticle.getShape().size() > 3) {
+			auto shapeCopy = placedParticle.getShape();
+			int index{};
+			findClosestVertexesTo(shapeCopy, cameraEditor.window2World(mouse.pos) - placedParticle.getPos(), index);
+			shapeCopy.erase(shapeCopy.begin() + index);
+			placedParticle.setShape(shapeCopy);
+		}
+	}
 
 	displayParticle(placedParticle, cameraEditor);
 }

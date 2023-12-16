@@ -71,6 +71,10 @@ namespace prt {	//	Particle namespace
 }
 //using prt::Color;
 
+namespace PSFunc {
+	D distanceBetween(const DP& p1, const DP& p2);
+}
+
 class Particle {
 protected:
 	DP pos;				//position DP, already initialized

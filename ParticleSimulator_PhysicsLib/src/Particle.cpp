@@ -10,6 +10,14 @@
 
 #include "Particle.h"
 
+
+namespace PSFunc {
+	D distanceBetween(const DP& p1, const DP& p2)  {
+		DP deltaPos = p1 - p2;
+		return std::sqrt(deltaPos.x * deltaPos.x + deltaPos.y * deltaPos.y);
+	}
+}
+
 /*	getPos()
 |-----------------------------------
 |	This function returns the pos struct of the Particle

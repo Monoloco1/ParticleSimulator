@@ -78,10 +78,10 @@ void Physics::setGravityBool(const bool& newGravityBool) {
 	gravityBool = newGravityBool;
 }
 
-D Physics::distanceBetween(const DP& p1, const DP& p2) const {
-	DP deltaPos = p1 - p2;
-	return std::sqrt(deltaPos.x*deltaPos.x + deltaPos.y*deltaPos.y);
-}
+//D Physics::distanceBetween(const DP& p1, const DP& p2) const {
+//	DP deltaPos = p1 - p2;
+//	return std::sqrt(deltaPos.x*deltaPos.x + deltaPos.y*deltaPos.y);
+//}
 
 /*	collisionReaction(Particle& p1, Particle& p2, D& offsetX, D& offsetY)
 |-----------------------------------
@@ -92,10 +92,12 @@ D Physics::distanceBetween(const DP& p1, const DP& p2) const {
 |	OUTPUT: void
 */
 void Physics::collisionReaction(Particle& p1, Particle& p2, const DP& offset) {
-	p1.setColor(prt::White);
-	p2.setColor(prt::White);
+	//p1.setColor(prt::White);
+	//p2.setColor(prt::White);
 
 	//	The code below is inspired on an older project of Cristian Niwelt
+	
+	//	Velocity change
 	D angle = atan2(p1.getPos().y - p2.getPos().y, p1.getPos().x - p2.getPos().x);
 	D normalMomentumI = 1.0 * p1.getMass() * (cos(angle) * p1.getVel().x + sin(angle) * p1.getVel().y);
 	D normalMomentumJ = 1.0 * p2.getMass() * (cos(angle) * p2.getVel().x + sin(angle) * p2.getVel().y);
@@ -108,8 +110,11 @@ void Physics::collisionReaction(Particle& p1, Particle& p2, const DP& offset) {
 		p2.getVel().y + normalMomentumI * sin(angle) / p2.getMass() - normalMomentumJ * sin(angle) / p2.getMass()
 		});
 
-	p1.setPos(p1.getPos() - offset/2.0);
-	p1.setPos(p2.getPos() + offset/2.0);
+	//	Position change
+	p1.setPos(p1.getPos() + DP(cos(angle), sin(angle)) * p2.getMass() / p1.getMass());
+	p2.setPos(p2.getPos() - DP(cos(angle), sin(angle)) * p2.getMass() / p1.getMass());
+	//p1.setPos(p1.getPos() + offset/2.0);
+	//p2.setPos(p2.getPos() - offset/2.0);
 
 	//D distBalls = distanceBetween(p1.getPos(), p2.getPos());
 	//distBalls = (p1.r + p2.r - distBalls) / 2;

@@ -48,9 +48,11 @@ protected:
 	bool showEditor{};
 	float placedParticleSizeMultiplier{ 1.0 };
 	bool placedParticleSizeMultiplierApply{ false };
-	Particle placedParticle = Particle({0.0, 0.0});	//this Particle will be placed next, can be changed in the editor
+	//this Particle will be placed next, can be edited in the editor
+	Particle placedParticle = Particle({0.0, 0.0});
 
 	//TODO: maybe change the way the holded particle is stored
+	//	Index of particle which is holded by the user, -1 for none
 	int holdedParticleIndex = -1;
 
 	class Camera {
@@ -80,6 +82,8 @@ protected:
 	} cameraSimulator, cameraEditor;
 
 	Physics physicsEngine;
+	void findClosestVertexesTo(const DPV& shape, const DP& pos, int& index1, int& index2);
+	void findClosestVertexesTo(const DPV& shape, const DP& pos, int& index);
 
 public:
 	void createWindow();

@@ -24,7 +24,7 @@ class Physics {
 protected:
 	PV particles{};
 	DP gravity{0.0, 1.0};
-	bool gravityBool{ true };
+	bool gravityBool{ false };
 
 public:
 	void removeParticles(const int& index);
@@ -42,7 +42,7 @@ public:
 	bool getGravityBool() const;
 	void setGravityBool(const bool& newGravityBool);
 
-	D distanceBetween(const DP& p1, const DP& p2) const;
+	//D distanceBetween(const DP& p1, const DP& p2) const;
 	void collisionReaction(Particle& p1, Particle& p2, const DP& offset);
 	void collisionReaction(const int& p1, const int& p2, const DP& offset);
 	bool collisionDetect(const Particle& p1, const Particle& p2, DP& offset);
