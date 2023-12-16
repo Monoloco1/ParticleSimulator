@@ -14,16 +14,22 @@
 #include "GUI.h"
 #include <string>
 
-
+/*	world2Window(); window2World()
+|-----------------------------------
+|	These funcs change a position struct to window or world coordinates accordingly
+|-----------------------------------
+|	INPUT: data pair(DP)
+|-----------------------------------
+|	OUTPUT: transformed DP
+*/
 DP GUI::Camera::world2Window(const DP& dp) const {
 	return ( dp - pos ) * zoom;
-	//return dp * zoom - pos;
 }
 DP GUI::Camera::window2World(const DP& dp) const {
 	return ( dp / zoom + pos ) ;
-	//return (dp + pos) / zoom;
 }
 
+//	GUI::Camera setters/getters
 DP GUI::Camera::getPos() {
 	return pos;
 }
