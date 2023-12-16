@@ -49,10 +49,7 @@ void GUI::Camera::setWindowSize(const DP& newWindowSize) {
 	windowSize = newWindowSize;
 }
 
-D GUI::Camera::multiplyZoom(const D& multiplier) {
-	zoom *= multiplier;
-	return zoom;
-}
+
 void GUI::Camera::moveProportional(const DP& XY) {
 	pos = pos + XY / zoom * std::min(windowSize.x, windowSize.y);
 }
