@@ -153,9 +153,9 @@ void GUI::removeWindow() {
 
 /*	displayParticle
 |-----------------------------------
-|	Removes SDL & ImGui windows and associated data
+|	draws a particle on the window by the rules of camera
 |-----------------------------------
-|	INPUT: void
+|	INPUT: reference to Particle to be drawn and Camera by which to draw it
 |-----------------------------------
 |	OUTPUT: void
 */
@@ -174,14 +174,31 @@ void GUI::displayParticle(const Particle& p, const Camera& camera) {
 	}
 	glEnd();
 }
+
+/*	displayParticleVector
+|-----------------------------------
+|	draws a DPV on screen
+|-----------------------------------
+|	INPUT: reference to Particle vector & camera struct
+|-----------------------------------
+|	OUTPUT: void
+*/
 void GUI::displayParticleVector(const PV& pv, const Camera& camera) {
 	glLoadIdentity();
 	for (auto& p : pv) {
 		displayParticle(p, camera);
 	}
-	
 }
 
+/*	displayImGUI
+|-----------------------------------
+|	Function to create & display the GUI of the project. The same Gui for Simulator and Editor windows
+|	Uses ImGui library
+|-----------------------------------
+|	INPUT: void
+|-----------------------------------
+|	OUTPUT: void
+*/
 void GUI::displayImGUI() {
 	using ImGui::BeginMainMenuBar, ImGui::MenuItem, ImGui::BeginMenu, ImGui::SeparatorText, ImGui::EndMenu, ImGui::EndMainMenuBar, ImGui::Begin, ImGui::End;
 	using ImGui::Button, ImGui::SliderFloat;
@@ -264,6 +281,16 @@ void GUI::displayImGUI() {
 
 }
 
+
+/*	runSimulator
+|-----------------------------------
+|	function that shows the simulated space, particles, runs collision functions
+|	processes user input
+|-----------------------------------
+|	INPUT: void
+|-----------------------------------
+|	OUTPUT: void
+*/
 void GUI::runSimulator() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -301,6 +328,14 @@ void GUI::runSimulator() {
 	displayParticleVector(physicsEngine.getParticles(), cameraSimulator);
 }
 
+/*	findClosestVertexesTo
+|-----------------------------------
+|	functions that find the index of the particle that is closest to pos indicated
+|-----------------------------------
+|	INPUT: DPV of vertexes(DP's), pos to compare, returned index/indexes of vertex/vertexes
+|-----------------------------------
+|	OUTPUT: void
+*/
 void GUI::findClosestVertexesTo(const DPV& shape, const DP& pos, int& index) {
 	//	find closest vertex
 	const auto shapeSize = shape.size();
@@ -355,6 +390,14 @@ void GUI::findClosestVertexesTo(const DPV& shape, const DP& pos, int& index1, in
 	}
 }
 
+/*	runEditor
+|-----------------------------------
+|	function that shows the edited particle and processes inputs for editing it
+|-----------------------------------
+|	INPUT: void
+|-----------------------------------
+|	OUTPUT: void
+*/
 void GUI::runEditor() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//	camera zoom
@@ -388,6 +431,15 @@ void GUI::runEditor() {
 	displayParticle(placedParticle, cameraEditor);
 }
 
+/*	run
+|-----------------------------------
+|	This is the program's main loop. Processes SDL & ImGui events(mainly user input)
+|	Decides to draw simulator or to draw editor
+|-----------------------------------
+|	INPUT: void
+|-----------------------------------
+|	OUTPUT: void
+*/
 void GUI::run() {
 	bool running{ true };
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
