@@ -13,6 +13,7 @@
 #include <math.h>
 #include "GUI.h"
 #include <string>
+using std::min, std::max;
 
 /*	world2Window(); window2World()
 |-----------------------------------
@@ -30,19 +31,19 @@ DP GUI::Camera::window2World(const DP& dp) const {
 }
 
 //	GUI::Camera setters/getters
-DP GUI::Camera::getPos() {
+DP GUI::Camera::getPos() const {
 	return pos;
 }
 void GUI::Camera::setPos(const DP& newPos) {
 	pos = newPos;
 }
-D GUI::Camera::getZoom() {
+D GUI::Camera::getZoom() const {
 	return zoom;
 }
 void GUI::Camera::setZoom(const D& newZoom) {
 	zoom = newZoom;
 }
-DP GUI::Camera::getWindowSize() {
+DP GUI::Camera::getWindowSize() const {
 	return windowSize;
 }
 void GUI::Camera::setWindowSize(const DP& newWindowSize) {
@@ -159,13 +160,24 @@ void GUI::removeWindow() {
 |-----------------------------------
 |	OUTPUT: void
 */
-void GUI::displayParticle(const Particle& p, const Camera& camera) {
+void GUI::displayParticle(const Particle& p, const Camera& camera, const int displayMode) {
 	glColor4ub((const GLubyte)p.getColor().str.r,
 		(const GLubyte)p.getColor().str.g,
 		(const GLubyte)p.getColor().str.b,
 		(const GLubyte)p.getColor().str.a);
 	
-	glBegin(GL_LINE_LOOP);//GL_POLYGON);							//draw Particle vertexes
+	//	draw Particle vertexes
+	switch (displayMode) {
+	case PART_DISP_WMESH:
+	case PART_DISP_WMESH_BB:
+		glBegin(GL_LINE_LOOP);
+		break;
+	case PART_DISP_FILLED:
+	case PART_DISP_FILLED_BB:
+	default:
+		glBegin(GL_POLYGON);
+		break;
+	}
 	for (auto& v : p.getShape()) {
 		glVertex2d(
 			camera.world2Window(v + p.getPos()).x,
@@ -173,6 +185,25 @@ void GUI::displayParticle(const Particle& p, const Camera& camera) {
 		);
 	}
 	glEnd();
+
+	//	display BB
+	if (displayMode == PART_DISP_WMESH_BB || displayMode == PART_DISP_FILLED_BB) {
+		glColor3b(255, 100, 255);
+		glBegin(GL_LINE_LOOP);
+		glVertex2d(
+			camera.world2Window(p.getPos()).x + p.getBB().e * camera.getZoom(),
+			camera.world2Window(p.getPos()).y + p.getBB().n * camera.getZoom());
+		glVertex2d(
+			camera.world2Window(p.getPos()).x + p.getBB().w * camera.getZoom(),
+			camera.world2Window(p.getPos()).y + p.getBB().n * camera.getZoom());
+		glVertex2d(
+			camera.world2Window(p.getPos()).x + p.getBB().w * camera.getZoom(),
+			camera.world2Window(p.getPos()).y + p.getBB().s * camera.getZoom());
+		glVertex2d(
+			camera.world2Window(p.getPos()).x + p.getBB().e * camera.getZoom(),
+			camera.world2Window(p.getPos()).y + p.getBB().s * camera.getZoom());
+		glEnd();
+	}
 }
 
 /*	displayParticleVector
@@ -183,10 +214,10 @@ void GUI::displayParticle(const Particle& p, const Camera& camera) {
 |-----------------------------------
 |	OUTPUT: void
 */
-void GUI::displayParticleVector(const PV& pv, const Camera& camera) {
+void GUI::displayParticleVector(const PV& pv, const Camera& camera, const int displayMode) {
 	glLoadIdentity();
 	for (auto& p : pv) {
-		displayParticle(p, camera);
+		displayParticle(p, camera, displayMode);
 	}
 }
 
@@ -253,9 +284,28 @@ void GUI::displayImGUI() {
 			if (SliderFloat("Grawitacja Y", &gravityCopiedY, -10.0f, 10.0f)) updateGravity = true;
 			if (SliderFloat("Grawitacja X", &gravityCopiedX, -10.0f, 10.0f)) updateGravity = true;
 			if (updateGravity) physicsEngine.setGravity({ static_cast<D>(gravityCopiedX), static_cast<D>(gravityCopiedY)});
+			SeparatorText("##");
+			//if (MenuItem("##", NULL, displayModeGet(), true));
+			//bool a;
+			//ImGui::Checkbox("checkbox", &a);
+			//ImGui::RadioButton("radio", &a);
+			//ImGui::ListBox("Tryb wyswietlania", &displayMode, &displayModeNames, 4, 2);
+			if (ImGui::BeginCombo("Tryb wyswietlania", displayModeNames[displayMode].c_str())) {
+				for (int i{}; i < displayModeNames.size(); ++i) {
+					if (ImGui::Selectable(displayModeNames.at(i).c_str(), displayMode == i))
+						displayMode = i;
+				}
+				//for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
+				//	const bool is_selected = (item_current_idx == n);
+				//	if (ImGui::Selectable(items[n], is_selected))
+				//		item_current_idx = n;
 
-					
-
+				//	// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+				//	if (is_selected)
+				//		ImGui::SetItemDefaultFocus();
+				//}
+				ImGui::EndCombo();
+			}
 			//MenuItem("Sel1 En1", NULL, true, true);
 			//MenuItem("Sel1 En0", NULL, true, false);
 			//MenuItem("Sel0 En1", NULL, false, true);
@@ -281,6 +331,14 @@ void GUI::displayImGUI() {
 
 }
 
+int GUI::displayModeGet() const {
+	return displayMode;
+}
+void GUI::displayModeSet(const int& newDisplayMode) {
+	assert(newDisplayMode == PART_DISP_WMESH || newDisplayMode == PART_DISP_FILLED ||
+		newDisplayMode == PART_DISP_WMESH_BB || newDisplayMode == PART_DISP_FILLED_BB);
+	displayMode = newDisplayMode;
+}
 
 /*	runSimulator
 |-----------------------------------
@@ -301,9 +359,7 @@ void GUI::runSimulator() {
 	if (mouse.lClick) {
 		Particle newParticle = placedParticle;
 		newParticle.setPos(cameraSimulator.window2World(mouse.pos));
-		physicsEngine.addParticle(
-			newParticle
-		);
+		physicsEngine.addParticle(newParticle);
 	};
 	if (mouse.rPressed) {
 		//	find the hovered particle
@@ -317,6 +373,7 @@ void GUI::runSimulator() {
 			}
 		}
 		if (holdedParticleIndex > -1) {
+			assert(holdedParticleIndex < physicsEngine.getParticles().size());
 			//	Change the holded particle vel
 			auto deltaVel = cameraSimulator.window2World(mouse.pos) - physicsEngine.getParticles(holdedParticleIndex).getPos();
 			deltaVel *= 0.001;
@@ -325,7 +382,7 @@ void GUI::runSimulator() {
 	}
 	if (mouse.rUnclick) holdedParticleIndex = -1;
 
-	displayParticleVector(physicsEngine.getParticles(), cameraSimulator);
+	displayParticleVector(physicsEngine.getParticles(), cameraSimulator, displayMode);
 }
 
 /*	findClosestVertexesTo
@@ -390,6 +447,25 @@ void GUI::findClosestVertexesTo(const DPV& shape, const DP& pos, int& index1, in
 	}
 }
 
+/*	recalculateBB
+|-----------------------------------
+|	function that calculates BB so it fits the shape of the Particle
+|-----------------------------------
+|	INPUT: reference to particle that will be acted upon
+|-----------------------------------
+|	OUTPUT: void
+*/
+void GUI::recalculateBB(Particle& particle) {
+	D e{}, w{}, n{}, s{};
+	for (const auto& v : particle.getShape()) {
+		e = min(e, v.x);
+		w = max(w, v.x);
+		n = min(n, v.y);
+		s = max(s, v.y);
+	}
+	particle.setBB(BB({n, s, w, e}));
+}
+
 /*	runEditor
 |-----------------------------------
 |	function that shows the edited particle and processes inputs for editing it
@@ -404,6 +480,7 @@ void GUI::runEditor() {
 	if (mouse.scrolled) {
 		cameraEditor.changePerspective(mouse.scrollY > 0 ? 1.1 : .9, mouse.pos);
 	}
+
 	//	add vertex
 	if (mouse.lClick) {
 		//int dp1{}, dp2{};
@@ -416,7 +493,9 @@ void GUI::runEditor() {
 		//shapeCopy.insert( shapeCopy.begin()+std::max(dp1, dp2), cameraEditor.window2World(mouse.pos)-placedParticle.getPos() );
 		shapeCopy.insert(shapeCopy.begin() + dp, cameraEditor.window2World(mouse.pos) - placedParticle.getPos());
 		placedParticle.setShape(shapeCopy);
+		recalculateBB(placedParticle);
 	}
+
 	//	remove vertex
 	if (mouse.rClick) {
 		if (placedParticle.getShape().size() > 3) {
@@ -426,9 +505,10 @@ void GUI::runEditor() {
 			shapeCopy.erase(shapeCopy.begin() + index);
 			placedParticle.setShape(shapeCopy);
 		}
+		recalculateBB(placedParticle);
 	}
 
-	displayParticle(placedParticle, cameraEditor);
+	displayParticle(placedParticle, cameraEditor, displayMode);
 }
 
 /*	run
@@ -490,9 +570,11 @@ void GUI::run() {
 					switch (evt.button.button) {
 					case SDL_BUTTON_LEFT:
 						mouse.lPressed = false;
+						mouse.lUnclick = true;
 						break;
 					case SDL_BUTTON_RIGHT:
 						mouse.rPressed = false;
+						mouse.rUnclick = true;
 						break;
 					default:
 						break;
@@ -560,6 +642,8 @@ void GUI::run() {
 
 		mouse.lClick = false;
 		mouse.rClick = false;
+		mouse.lUnclick = false;
+		mouse.rUnclick = false;
 		mouse.scrolled = false;
 	}
 }

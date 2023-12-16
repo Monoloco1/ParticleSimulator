@@ -51,7 +51,7 @@ struct BB {			// Bounding Box
 };
 
 namespace prt {	//	Particle namespace
-	//	This Color struct is created to add compatibility for other graphics libraries than SDL
+	//	This Color struct is created to add compatibility for graphics libraries other than SDL
 	union Color {	//	Color union compatible with SDL_Color
 		struct {
 			uint8_t r;
@@ -67,9 +67,7 @@ namespace prt {	//	Particle namespace
 
 	const Color Red = { {255, 0, 0, 255} };
 	const Color White = { {255, 255, 255, 255} };
-	//using White = {255, 255, 255, 255} ;
 }
-//using prt::Color;
 
 namespace PSFunc {
 	D distanceBetween(const DP& p1, const DP& p2);

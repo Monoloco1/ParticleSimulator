@@ -1,4 +1,4 @@
-/*
+﻿/*
 -------------------------------------
 |	Software written by Cristian Niwelt (C)
 |
@@ -20,14 +20,18 @@
 #include <iostream>
 #include <string>
 #include <cassert>
+#include <array>
 
 #include <SDL.h>
 #include <SDL_opengl.h>
 
-
-
 #include "../../ParticleSimulator_PhysicsLib/include/Physics.h"
+using std::string;
 
+#define PART_DISP_WMESH 1
+#define PART_DISP_FILLED 0
+#define PART_DISP_WMESH_BB 3
+#define PART_DISP_FILLED_BB 2
 
 class GUI {
 protected:
@@ -55,6 +59,16 @@ protected:
 	//	Index of particle which is holded by the user, -1 for none
 	int holdedParticleIndex = -1;
 
+	
+	std::array<const string, 4> displayModeNames {
+		"Wypelnione",
+		"Kontur",
+		"Wypelnione + bounding box",
+		"Kontur + bounding box"
+	};
+	//	Display mode(filled, mesh, show BB)
+	int displayMode = PART_DISP_FILLED;
+
 	class Camera {
 	private:
 		//SDL_Window* window{};
@@ -66,14 +80,14 @@ protected:
 		DP world2Window(const DP& dp) const;
 		DP window2World(const DP& dp) const;
 
-		DP getPos();
+		DP getPos() const;
 		void setPos(const DP& newPos);
-		D getZoom();
+		D getZoom() const;
 		void setZoom(const D& newZoom);
-		DP getWindowSize();
+		DP getWindowSize() const;
 		void setWindowSize(const DP& newWindowSize);
 
-		D multiplyZoom(const D& multiplier);
+		D multiplyZoom(const D& multiplier) const;
 
 		void moveProportional(const DP & XY);
 		void changePerspective(const D& multiplier, const DP& axis);
@@ -83,12 +97,15 @@ protected:
 	Physics physicsEngine;
 	void findClosestVertexesTo(const DPV& shape, const DP& pos, int& index1, int& index2);
 	void findClosestVertexesTo(const DPV& shape, const DP& pos, int& index);
+	void recalculateBB(Particle& particle);
 
 public:
 	void createWindow();
-	void displayParticle(const Particle& p, const Camera& camera);
-	void displayParticleVector(const PV& pv, const Camera& camera);
+	void displayParticle(const Particle& p, const Camera& camera, const int displayMode);
+	void displayParticleVector(const PV& pv, const Camera& camera, const int displayMode);
 	void displayImGUI();
+	int displayModeGet() const;
+	void displayModeSet(const int& newDisplayMode);
 	void runSimulator();
 	void runEditor();
 	void run();
