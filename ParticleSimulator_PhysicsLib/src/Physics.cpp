@@ -24,6 +24,14 @@ void Physics::addParticle(const Particle& p) {
 	particles.push_back(p);
 }
 
+/*	setParticles( Particle& p )
+|-----------------------------------
+|	These functions replace one or all Particles in the particles vector
+|-----------------------------------
+|	INPUT: a valid Particle element & index or a Particle vector
+|-----------------------------------
+|	OUTPUT: void
+*/
 void Physics::setParticles(const int& index, const Particle& p) {
 	particles.at(index) = p;
 }
@@ -55,6 +63,14 @@ Particle Physics::getParticles(const int& index) {
 	return particles[index];
 }
 
+/*	getParticleVel; setParticleVel
+|-----------------------------------
+|	direct getter&setter of the vel of a Particle in the particles vector
+|-----------------------------------
+|	INPUT: index of the Particle wanted & optionally set vel
+|-----------------------------------
+|	OUTPUT: it's vel DP or void
+*/
 DP Physics::getParticleVel(const int& index) const {
 	assert(index >= 0 && index < (signed)particles.size());
 	return particles.at(index).getVel();
@@ -64,7 +80,14 @@ void Physics::setParticleVel(const int& index, const DP& newVel) {
 	particles.at(index).setVel(newVel);
 }
 
-
+/*	Gravity getters/setters
+|-----------------------------------
+|	These functions set or get the gravity in the physicsEngine. Also set&get the gravityBool boolean
+|-----------------------------------
+|	INPUT: void or new gravity or new gravity bool
+|-----------------------------------
+|	OUTPUT: it's vel DP or void
+*/
 DP Physics::getGravity() const {
 	return gravity;
 }
@@ -78,11 +101,6 @@ void Physics::setGravityBool(const bool& newGravityBool) {
 	gravityBool = newGravityBool;
 }
 
-//D Physics::distanceBetween(const DP& p1, const DP& p2) const {
-//	DP deltaPos = p1 - p2;
-//	return std::sqrt(deltaPos.x*deltaPos.x + deltaPos.y*deltaPos.y);
-//}
-
 /*	collisionReaction(Particle& p1, Particle& p2, D& offsetX, D& offsetY)
 |-----------------------------------
 |	This function applies a reaction function to the colliding particles
@@ -92,9 +110,6 @@ void Physics::setGravityBool(const bool& newGravityBool) {
 |	OUTPUT: void
 */
 void Physics::collisionReaction(Particle& p1, Particle& p2, const DP& offset) {
-	//p1.setColor(prt::White);
-	//p2.setColor(prt::White);
-
 	//	The code below is inspired on an older project of Cristian Niwelt
 	
 	//	Velocity change
@@ -115,39 +130,6 @@ void Physics::collisionReaction(Particle& p1, Particle& p2, const DP& offset) {
 	p2.setPos(p2.getPos() - DP(cos(angle), sin(angle)) * p2.getMass() / p1.getMass());
 	//p1.setPos(p1.getPos() + offset/2.0);
 	//p2.setPos(p2.getPos() - offset/2.0);
-
-	//D distBalls = distanceBetween(p1.getPos(), p2.getPos());
-	//distBalls = (p1.r + p2.r - distBalls) / 2;
-	//distBalls = max(distBalls, 0.0001f);
-	//p1.getPos().x += cos(angle) * distBalls;
-	//p1.getPos().y += sin(angle) * distBalls;
-	//p2.getPos().x -= cos(angle) * distBalls;
-	//p2.getPos().y -= sin(angle) * distBalls;
-
-	/*		Code from older project made by Cristian Niwelt
-	for(unsigned int i=0; i<balls.size()-1; i++) {  //ball bounce
-				for(unsigned int j=i+1; j<balls.size(); j++) {
-
-          float distBalls = dist(balls[i].x, balls[i].y, p2.x, balls[j].y);
-					if( distBalls < (balls[i].r+balls[j].r) ) {
-						//cout << "IMPACT\n";
-						float angle=atan2(balls[i].y-balls[j].y, balls[i].x-balls[j].x);
-						float normalMomentumI=BOUNCE_FROM_BALL_ENERGY*balls[i].m*(cos(angle)*balls[i].vx+sin(angle)*balls[i].vy);
-						float normalMomentumJ=BOUNCE_FROM_BALL_ENERGY*balls[j].m*(cos(angle)*balls[j].vx+sin(angle)*balls[j].vy);
-						balls[i].vx+=normalMomentumJ*cos(angle)/balls[i].m-normalMomentumI*cos(angle)/balls[i].m;
-						balls[i].vy+=normalMomentumJ*sin(angle)/balls[i].m-normalMomentumI*sin(angle)/balls[i].m;
-						balls[j].vx+=normalMomentumI*cos(angle)/balls[j].m-normalMomentumJ*cos(angle)/balls[j].m;
-						balls[j].vy+=normalMomentumI*sin(angle)/balls[j].m-normalMomentumJ*sin(angle)/balls[j].m;
-            distBalls = (balls[i].r+balls[j].r-distBalls)/2;
-            distBalls = max(distBalls, 0.0001f);
-            balls[i].x+=cos(angle)*distBalls;
-            balls[i].y+=sin(angle)*distBalls;
-            balls[j].x-=cos(angle)*distBalls;
-            balls[j].y-=sin(angle)*distBalls;
-					}
-				}
-			}
-			*/
 }
 void Physics::collisionReaction(const int& p1, const int& p2, const DP& offset) {
 	assert(p1 >= 0 && p1 < (signed)particles.size());
@@ -198,8 +180,6 @@ bool Physics::collisionDetect(const int& p1, const int& p2, DP& offset) {
 	assert( p2 >= 0 && p2 < (signed)particles.size() );
 
 	return collisionDetect(particles[p1], particles[p2], offset);
-
-	//return false;
 }
 
 /*	hoverDetect(Particle& p, DP& pos)
@@ -222,7 +202,6 @@ bool Physics::hoverDetect(const int& p, const DP& pos) {
 	assert(p >= 0 && p < (signed)particles.size());
 	
 	return hoverDetect(particles[p], pos);
-
 }
 
 /*	runPhysicsIteration()
@@ -279,9 +258,8 @@ void Physics::removeParticles(const int& startIndex, const int& length) {
 	particles.erase(particles.begin() + startIndex, particles.begin() + startIndex + length);
 }
 
-
-
 //	Parametric constructor
 Physics::Physics(const vector<Particle>& particles) : particles(particles) {}
 
+//	Destructor of the Physics class, default
 Physics::~Physics() {}
