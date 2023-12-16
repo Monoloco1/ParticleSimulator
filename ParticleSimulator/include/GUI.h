@@ -63,7 +63,6 @@ protected:
 		DP windowSize{};
 
 	public:
-		void init(SDL_Window* window);
 		DP world2Window(const DP& dp) const;
 		DP window2World(const DP& dp) const;
 
@@ -89,7 +88,7 @@ public:
 	void createWindow();
 	void displayParticle(const Particle& p);
 	void displayParticle(const Particle& p, const Camera& camera);
-	void displayParticleVector(const PV& pv);	//const ?
+	void displayParticleVector(const PV& pv);
 	void displayImGUI();
 	void runSimulator();
 	void runEditor();

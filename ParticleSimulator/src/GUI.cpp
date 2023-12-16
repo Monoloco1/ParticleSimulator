@@ -14,11 +14,6 @@
 #include "GUI.h"
 #include <string>
 
-void GUI::Camera::init(SDL_Window* window) {
-	
-	//SDL_GetWindowBordersSize(window, &top, &left, &bottom, &right);
-	//windowCenter = { windowSize.x/2.0, windowSize.y/2.0 };		//check if conversion ok
-}
 
 DP GUI::Camera::world2Window(const DP& dp) const {
 	return ( dp - pos ) * zoom;
