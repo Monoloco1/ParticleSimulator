@@ -86,9 +86,8 @@ protected:
 
 public:
 	void createWindow();
-	void displayParticle(const Particle& p);
 	void displayParticle(const Particle& p, const Camera& camera);
-	void displayParticleVector(const PV& pv);
+	void displayParticleVector(const PV& pv, const Camera& camera);
 	void displayImGUI();
 	void runSimulator();
 	void runEditor();

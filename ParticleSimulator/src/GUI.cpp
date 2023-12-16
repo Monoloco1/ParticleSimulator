@@ -159,21 +159,6 @@ void GUI::removeWindow() {
 |-----------------------------------
 |	OUTPUT: void
 */
-void GUI::displayParticle(const Particle& p) {
-	glColor4ub((const GLubyte)p.getColor().str.r,
-		(const GLubyte)p.getColor().str.g,
-		(const GLubyte)p.getColor().str.b,
-		(const GLubyte)p.getColor().str.a);
-
-	glBegin(GL_POLYGON);							//draw Particle vertexes
-	for (auto& v : p.getShape()) {
-		glVertex2d(
-			cameraSimulator.world2Window(v + p.getPos()).x,
-			cameraSimulator.world2Window(v + p.getPos()).y
-		);
-	}
-	glEnd();
-}
 void GUI::displayParticle(const Particle& p, const Camera& camera) {
 	glColor4ub((const GLubyte)p.getColor().str.r,
 		(const GLubyte)p.getColor().str.g,
@@ -189,10 +174,10 @@ void GUI::displayParticle(const Particle& p, const Camera& camera) {
 	}
 	glEnd();
 }
-void GUI::displayParticleVector(const PV& pv) {
+void GUI::displayParticleVector(const PV& pv, const Camera& camera) {
 	glLoadIdentity();
 	for (auto& p : pv) {
-		displayParticle(p);
+		displayParticle(p, camera);
 	}
 	
 }
@@ -313,7 +298,7 @@ void GUI::runSimulator() {
 	}
 	if (mouse.rUnclick) holdedParticleIndex = -1;
 
-	displayParticleVector(physicsEngine.getParticles());
+	displayParticleVector(physicsEngine.getParticles(), cameraSimulator);
 }
 
 void GUI::findClosestVertexesTo(const DPV& shape, const DP& pos, int& index) {
