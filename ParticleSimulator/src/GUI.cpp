@@ -49,16 +49,42 @@ void GUI::Camera::setWindowSize(const DP& newWindowSize) {
 	windowSize = newWindowSize;
 }
 
-
+/*	moveProportional
+|-----------------------------------
+|	moves the camera struct by a fraction of the screen
+|-----------------------------------
+|	INPUT: DP of X & Y fractions by which to move camera
+|-----------------------------------
+|	OUTPUT: void
+*/
 void GUI::Camera::moveProportional(const DP& XY) {
 	pos = pos + XY / zoom * std::min(windowSize.x, windowSize.y);
 }
+
+/*	changePerspective
+|-----------------------------------
+|	zooms & moves the camera struct so the pos indicated by mouse cursor
+|	stays in the same place on the screen
+|-----------------------------------
+|	INPUT: D of zoom amount; DP of the pos indicated before
+|-----------------------------------
+|	OUTPUT: void
+*/
 void GUI::Camera::changePerspective(const D& multiplier, const DP& dp) {
 	DP scaleFactor = { windowSize.x * (dp.x/windowSize.x*2.0), windowSize.y * (dp.y / windowSize.y * 2.0) };
 	pos = pos + scaleFactor / 20.0 / zoom / multiplier * (multiplier >= 1.0 ? 1.0 : -1.0);
 	zoom *= multiplier;
 }
 
+/*	createWindow
+|-----------------------------------
+|	Initializes SDL, OpenGL & ImGui
+|	Creates window
+|-----------------------------------
+|	INPUT: void
+|-----------------------------------
+|	OUTPUT: void
+*/
 void GUI::createWindow() {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -106,6 +132,15 @@ void GUI::createWindow() {
 
 	//camera.init(mainWindow);
 }
+
+/*	removeWindow
+|-----------------------------------
+|	Removes SDL & ImGui windows and associated data
+|-----------------------------------
+|	INPUT: void
+|-----------------------------------
+|	OUTPUT: void
+*/
 void GUI::removeWindow() {
 	ImGui_ImplOpenGL2_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
@@ -115,6 +150,15 @@ void GUI::removeWindow() {
 	SDL_Quit();
 
 }
+
+/*	displayParticle
+|-----------------------------------
+|	Removes SDL & ImGui windows and associated data
+|-----------------------------------
+|	INPUT: void
+|-----------------------------------
+|	OUTPUT: void
+*/
 void GUI::displayParticle(const Particle& p) {
 	glColor4ub((const GLubyte)p.getColor().str.r,
 		(const GLubyte)p.getColor().str.g,
