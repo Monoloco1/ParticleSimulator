@@ -376,8 +376,9 @@ void GUI::runSimulator() {
 			assert(holdedParticleIndex < physicsEngine.getParticles().size());
 			//	Change the holded particle vel
 			auto deltaVel = cameraSimulator.window2World(mouse.pos) - physicsEngine.getParticles(holdedParticleIndex).getPos();
-			deltaVel *= 0.001;
-			physicsEngine.setParticleVel(holdedParticleIndex, deltaVel);
+			deltaVel *= 0.1;
+			physicsEngine.setParticleVel(holdedParticleIndex, physicsEngine.getParticleVel(holdedParticleIndex)+deltaVel);
+			physicsEngine.setParticleVel(holdedParticleIndex, physicsEngine.getParticleVel(holdedParticleIndex) * 0.7);
 		}
 	}
 	if (mouse.rUnclick) holdedParticleIndex = -1;
