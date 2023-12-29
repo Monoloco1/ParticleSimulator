@@ -1,13 +1,6 @@
 #include "../../ParticleSimulator_PhysicsLib/include/Physics.h"
 #include <gtest/gtest.h>
 
-// Demonstrate some basic assertions.
-TEST(ParticlePhysics_Tests, BasicAssertions) {
-  // Expect two strings not to be equal.
-  EXPECT_STRNE("hello", "world");
-  // Expect equality.
-  EXPECT_EQ(7 * 6, 42);
-}
 
 TEST(ParticlePhysics_Tests, add_remove_get_Particles) {
 	//Create test Physics object
@@ -44,13 +37,12 @@ TEST(ParticlePhysics_Tests, collsionDetection_test) {
 	Particle testParticle2({ 2.0, 2.0 });	//should collide
 	testPhysics.addParticle(testParticle1);
 	testPhysics.addParticle(testParticle2);
-	D offX{};
-	D offY{};
-	ASSERT_TRUE( testPhysics.collisionDetect(0, 1, offX, offY) );
+	DP offset{};
+	ASSERT_TRUE( testPhysics.collisionDetect(0, 1, offset) );
 
 	testParticle2.setPos( { 1.0, 100.0 } );
 	testPhysics.setParticles( 1, testParticle2 );
-	ASSERT_FALSE(testPhysics.collisionDetect(0, 1, offX, offY));
+	ASSERT_FALSE(testPhysics.collisionDetect(0, 1, offset));
 }
 
 TEST(ParticlePhysics_Tests, hoverDetection_test) {
@@ -71,10 +63,9 @@ TEST(ParticlePhysics_Tests, collsionReaction_test) {
 	Particle testParticle2({ 2.0, 2.0 });	//should collide
 	testPhysics.addParticle(testParticle1);
 	testPhysics.addParticle(testParticle2);
-	D offX{};
-	D offY{};
-	if (testPhysics.collisionDetect(0, 1, offX, offY)) {
-		testPhysics.collisionReaction(0, 1, offX, offY);
+	DP offset{};
+	if (testPhysics.collisionDetect(0, 1, offset)) {
+		testPhysics.collisionReaction(0, 1, offset);
 	}
 	ASSERT_NE(testPhysics.getParticles(0).getPos().x, testParticle1.getPos().x);
 	ASSERT_NE(testPhysics.getParticles(0).getPos().y, testParticle1.getPos().y);
