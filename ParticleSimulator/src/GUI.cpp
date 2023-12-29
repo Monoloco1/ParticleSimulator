@@ -186,7 +186,7 @@ void GUI::displayParticle(const Particle& p, const Camera& camera, const int dis
 
 	//	display BB
 	if (displayMode == PART_DISP_WMESH_BB || displayMode == PART_DISP_FILLED_BB) {
-		glColor3b(255, 100, 255);
+		glColor3ub(255, 0, 255);
 		glBegin(GL_LINE_LOOP);
 		glVertex2d(
 			camera.world2Window(p.getPos()).x + p.getBB().e * camera.getZoom(),
