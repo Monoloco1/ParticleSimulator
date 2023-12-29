@@ -125,6 +125,7 @@ void Physics::collisionReaction(Particle& p1, Particle& p2, const DP& offset) {
 		p2.getVel().y + normalMomentumI * sin(angle) / p2.getMass() - normalMomentumJ * sin(angle) / p2.getMass()
 		});
 
+	//	TODO: this moves the particles by a constant amount each time they touch, change it
 	//	Position change
 	p1.setPos(p1.getPos() + DP(cos(angle), sin(angle)) * p2.getMass() / p1.getMass());
 	p2.setPos(p2.getPos() - DP(cos(angle), sin(angle)) * p2.getMass() / p1.getMass());

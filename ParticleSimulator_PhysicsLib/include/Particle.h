@@ -7,25 +7,25 @@
 -------------------------------------
 */
 
-
 #pragma once
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
+
+
 using std::vector;
-
 using D = double;	//	Data
-
 
 struct DP {			//	Data Pair
 	D x{};
 	D y{};
+
 public:
 	DP& operator= (const DP& dp1);
 	DP(const DP& dp);
 	DP(const D& x, const D& y);
-
-	DP() = default;	//	intellisense helped to create this constructor when debugging :)
+	DP() = default;
 };
 
 DP operator+ (const DP& dp1, const DP& dp2);
@@ -75,12 +75,12 @@ namespace PSFunc {
 
 class Particle {
 protected:
-	DP pos;				//position DP, already initialized
+	DP pos;				//position DP, already initialized in DP definition
 	DP vel;				//velocity DP
 	BB bb;				//bounding box BB
-	DPV shape;			//DPV representing Particle shape
-	D mass{};
-	prt::Color col{ {255, 255, 255, 255} };
+	DPV shape;			//DPV representing Particle shape, relative to Particle pos
+	D mass{};			//mass of the Particle
+	prt::Color col{ {255, 255, 255, 255} };	//Color of the Particle
 
 public:
 	DP getPos() const;

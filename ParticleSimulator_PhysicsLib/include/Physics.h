@@ -7,7 +7,6 @@
 -------------------------------------
 */
 
-
 #pragma once		// include this header in the translation unit only once
 
 #include <iostream>
@@ -17,14 +16,13 @@
 #include "Particle.h"
 
 using std::vector;
-//using Map = std::tuple
 using PV = vector<Particle>;	//	ParticleVector
 
 class Physics {
 protected:
-	PV particles{};
-	DP gravity{0.0, 1.0};
-	bool gravityBool{ false };
+	PV particles{};				//	Particles in this Physics instance
+	DP gravity{0.0, 1.0};		//	global gravity amount
+	bool gravityBool{ false };	//	gravity true or false
 
 public:
 	void removeParticles(const int& index);
@@ -42,7 +40,6 @@ public:
 	bool getGravityBool() const;
 	void setGravityBool(const bool& newGravityBool);
 
-	//D distanceBetween(const DP& p1, const DP& p2) const;
 	void collisionReaction(Particle& p1, Particle& p2, const DP& offset);
 	void collisionReaction(const int& p1, const int& p2, const DP& offset);
 	bool collisionDetect(const Particle& p1, const Particle& p2, DP& offset);
@@ -50,9 +47,6 @@ public:
 	bool hoverDetect(const Particle& p, const DP& pos);
 	bool hoverDetect(const int& p, const DP& pos);
 	void runPhysicsIteration();
-
-	
-	
 
 	Physics() = default;
 	Physics(const vector<Particle>& particles);
