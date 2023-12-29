@@ -8,9 +8,6 @@
 */
 
 
-//#include <iomanip>
-//#include "../../SDL2/include/SDL.h"
-//#include "../SDL2/include/SDL.h"
 #include "GUI.h"
 
 int main(int argc, char** argv) {
