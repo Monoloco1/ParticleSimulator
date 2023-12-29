@@ -276,8 +276,8 @@ void GUI::displayImGUI() {
 
 			SeparatorText("##");
 			if (MenuItem("Wlacz grawitacje", NULL, physicsEngine.getGravityBool(), true)) physicsEngine.setGravityBool(!physicsEngine.getGravityBool());
-			float gravityCopiedX = static_cast<D>(physicsEngine.getGravity().x);
-			float gravityCopiedY = static_cast<D>(physicsEngine.getGravity().y);
+			float gravityCopiedX = static_cast<float>(physicsEngine.getGravity().x);
+			float gravityCopiedY = static_cast<float>(physicsEngine.getGravity().y);
 			bool updateGravity{ false };
 			if (SliderFloat("Grawitacja Y", &gravityCopiedY, -10.0f, 10.0f)) updateGravity = true;
 			if (SliderFloat("Grawitacja X", &gravityCopiedX, -10.0f, 10.0f)) updateGravity = true;
@@ -289,7 +289,7 @@ void GUI::displayImGUI() {
 			//ImGui::RadioButton("radio", &a);
 			//ImGui::ListBox("Tryb wyswietlania", &displayMode, &displayModeNames, 4, 2);
 			if (ImGui::BeginCombo("Tryb wyswietlania", displayModeNames[displayMode].c_str())) {
-				for (int i{}; i < displayModeNames.size(); ++i) {
+				for (int i{}; static_cast<size_t>(i) < displayModeNames.size(); ++i) {
 					if (ImGui::Selectable(displayModeNames.at(i).c_str(), displayMode == i))
 						displayMode = i;
 				}
@@ -364,7 +364,7 @@ void GUI::runSimulator() {
 		//	find the hovered particle
 		if (mouse.rClick) {
 			//TODO:	check this
-			for (int p{}; p < physicsEngine.getParticles().size(); ++p) {
+			for (int p{}; static_cast<size_t>(p) < physicsEngine.getParticles().size(); ++p) {
 				if (physicsEngine.hoverDetect(p, cameraSimulator.window2World(mouse.pos))) {
 					holdedParticleIndex = p;
 					break;
@@ -372,7 +372,7 @@ void GUI::runSimulator() {
 			}
 		}
 		if (holdedParticleIndex > -1) {
-			assert(holdedParticleIndex < physicsEngine.getParticles().size());
+			assert(static_cast<size_t>(holdedParticleIndex) < physicsEngine.getParticles().size());
 			//	Change the holded particle vel towards mouse pointer
 			auto deltaVel = cameraSimulator.window2World(mouse.pos) - physicsEngine.getParticles(holdedParticleIndex).getPos();
 			deltaVel *= 0.1;
@@ -404,7 +404,7 @@ void GUI::findClosestVertexesTo(const DPV& shape, const DP& pos, int& index) {
 			return;
 		}
 		else {
-			for (int i{ 1 }; i < shapeSize; ++i) {
+			for (int i{ 1 }; static_cast<size_t>(i) < shapeSize; ++i) {
 				D distI = PSFunc::distanceBetween(pos, shape.at(i));
 				if (distI < dist) {
 					dist = distI;
@@ -427,7 +427,7 @@ void GUI::findClosestVertexesTo(const DPV& shape, const DP& pos, int& index1, in
 			index2 = dp2;
 			return;
 		} else {
-			for (int i{ 2 }; i < shape.size(); ++i) {
+			for (int i{ 2 }; static_cast<size_t>(i) < shape.size(); ++i) {
 				D distI = PSFunc::distanceBetween(pos, shape.at(i));
 				if (distI < dist1) {
 					dist2 = dist1;
