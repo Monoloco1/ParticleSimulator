@@ -9,7 +9,6 @@ set( CMAKE_BUILD_TYPE Debug )
 #set( CMAKE_BUILD_TYPE Release )
 
 
-#moze ustawic C++20???
 if( WIN32 )
 	set( CMAKE_CXX_FLAGS "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /std:c++20 /D_UNICODE /DUNICODE" )
 	set( CMAKE_CXX_FLAGS_DEBUG "/MDd /Zi /Ob0 /Od /RTC1 /std:c++20 /D_UNICODE /DUNICODE" )
