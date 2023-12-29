@@ -7,17 +7,15 @@
 -------------------------------------
 */
 
-#define DEFAULT_WIDTH  640.0
-#define DEFAULT_HEIGHT 480.0
 
 #include <math.h>
 #include "GUI.h"
-#include <string>
+
 using std::min, std::max;
 
 /*	world2Window(); window2World()
 |-----------------------------------
-|	These funcs change a position struct to window or world coordinates accordingly
+|	These funcs change a position struct from/to window or world coordinates accordingly
 |-----------------------------------
 |	INPUT: data pair(DP)
 |-----------------------------------
@@ -331,6 +329,7 @@ void GUI::displayImGUI() {
 
 }
 
+//	GUI::displayMode setter/getter
 int GUI::displayModeGet() const {
 	return displayMode;
 }
@@ -374,7 +373,7 @@ void GUI::runSimulator() {
 		}
 		if (holdedParticleIndex > -1) {
 			assert(holdedParticleIndex < physicsEngine.getParticles().size());
-			//	Change the holded particle vel
+			//	Change the holded particle vel towards mouse pointer
 			auto deltaVel = cameraSimulator.window2World(mouse.pos) - physicsEngine.getParticles(holdedParticleIndex).getPos();
 			deltaVel *= 0.1;
 			physicsEngine.setParticleVel(holdedParticleIndex, physicsEngine.getParticleVel(holdedParticleIndex)+deltaVel);
@@ -536,8 +535,8 @@ void GUI::run() {
 				break;
 			case SDL_WINDOWEVENT:
 				if (evt.window.event == SDL_WINDOWEVENT_RESIZED) {
-					cameraSimulator.setWindowSize({(D)evt.window.data1, (D)evt.window.data2 });
-					cameraEditor.setWindowSize({ (D)evt.window.data1, (D)evt.window.data2 });
+					cameraSimulator.setWindowSize( {(D)evt.window.data1, (D)evt.window.data2 } );
+					cameraEditor.setWindowSize({ (D)evt.window.data1, (D)evt.window.data2 } );
 
 					glViewport(0, 0, (GLsizei)cameraSimulator.getWindowSize().x, (GLsizei)cameraSimulator.getWindowSize().y);
 					glMatrixMode(GL_PROJECTION);

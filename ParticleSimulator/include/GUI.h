@@ -10,34 +10,39 @@
 
 #pragma once		// include this header in the translation unit only once
 
+#define DEFAULT_WIDTH  640.0
+#define DEFAULT_HEIGHT 480.0
 
-
+//	ImGui library
 #include "imgui.h"
 #include "../imgui/backends/imgui_impl_sdl2.h"
 #include "../imgui/backends/imgui_impl_opengl2.h"
-//#include "imgui_demo.cpp"
 
+//	standard library
 #include <iostream>
 #include <string>
 #include <cassert>
 #include <array>
 
+//	SDL graphics library & OpenGL context
 #include <SDL.h>
 #include <SDL_opengl.h>
 
+//	Particle Physics library
 #include "../../ParticleSimulator_PhysicsLib/include/Physics.h"
+
+
 using std::string;
 
-#define PART_DISP_WMESH 1
-#define PART_DISP_FILLED 0
-#define PART_DISP_WMESH_BB 3
-#define PART_DISP_FILLED_BB 2
+
 
 class GUI {
 protected:
 	SDL_Window* mainWindow{};
 	SDL_Renderer* mainRenderer{};
 	SDL_Event evt{};
+
+	//	Mouse input struct with variables regarding mouse state
 	struct {
 		DP pos;					//mouse position DP
 		// Click - change to pressed; Unclick - change to unpressed; Pressed - is holded down
@@ -52,26 +57,34 @@ protected:
 	bool showEditor{};
 	float placedParticleSizeMultiplier{ 1.0 };
 	bool placedParticleSizeMultiplierApply{ false };
-	//this Particle will be placed next, can be edited in the editor
+
+	//	This Particle will be placed next, can be edited in the editor
 	Particle placedParticle = Particle({0.0, 0.0});
 
 	//TODO: maybe change the way the holded particle is stored
 	//	Index of particle which is holded by the user, -1 for none
 	int holdedParticleIndex = -1;
 
-	
+	//	TODO: change how this is stored, maybe #define, maybe enum
+	//	Names of the display Modes shown in menus
 	std::array<const string, 4> displayModeNames {
 		"Wypelnione",
 		"Kontur",
 		"Wypelnione + bounding box",
 		"Kontur + bounding box"
 	};
-	//	Display mode(filled, mesh, show BB)
+
+	//	TODO: maybe change to enum
+	//	This is how the particles will be rendered, possible options:
+	#define PART_DISP_WMESH 1
+	#define PART_DISP_FILLED 0
+	#define PART_DISP_WMESH_BB 3
+	#define PART_DISP_FILLED_BB 2
 	int displayMode = PART_DISP_FILLED;
 
+	//	Camera class, one instance for Editor, one for Simulation
 	class Camera {
 	private:
-		//SDL_Window* window{};
 		DP pos;		//camera center position in the world
 		D zoom{1};	//zoom/magnification the camera has on the world
 		DP windowSize{};
@@ -95,6 +108,8 @@ protected:
 	} cameraSimulator, cameraEditor;
 
 	Physics physicsEngine;
+
+	//	Additional functions for the Editor
 	void findClosestVertexesTo(const DPV& shape, const DP& pos, int& index1, int& index2);
 	void findClosestVertexesTo(const DPV& shape, const DP& pos, int& index);
 	void recalculateBB(Particle& particle);
