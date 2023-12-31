@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.14)
 
 project(ParticleSimulator_Tests)
 
-set( CMAKE_BUILD_TYPE Debug )
+#set( CMAKE_BUILD_TYPE Debug )
+#set( CMAKE_BUILD_TYPE Release )
 
 if( WIN32 )
 	set( CMAKE_CXX_FLAGS "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /std:c++20 /D_UNICODE /DUNICODE" )
