@@ -51,7 +51,9 @@ add_executable( ${PROJECT_NAME} ${SOURCES} )
 find_library( 	PARTICLE_SIMULATOR_PHYSICS_LIB 
 		NAMES 			ParticleSimulator_PhysicsLib 
 		PATHS 			../ParticleSimulator_PhysicsLib/build_win/Debug
-					../ParticleSimulator_PhysicsLib/build_linux/Debug )
+						../ParticleSimulator_PhysicsLib/build_linux/Debug
+						../ParticleSimulator_PhysicsLib/build_win/Release
+						../ParticleSimulator_PhysicsLib/build_linux/Release
 					
 target_link_libraries(
 	
