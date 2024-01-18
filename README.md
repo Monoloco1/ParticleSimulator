@@ -1,7 +1,10 @@
 # ParticleSimulator
 
+
 Please use the provided .bat files to generate the project.
 
-Particle Simulator is the project I made for my Object Oriented Languages class at AGH UST. It is an exercise in correct analysis, design and writing of a computer program using an Object Oriented Language, in this case C++20. 
-This program is designed to work with Microsoft Windows x86/x64 and a C++20 compiler. For compatibility with other OS the SDL library must be compiled again. The CMake process may not correctly work on other OS, which can be remedied by modifying the CMakeLists files.
-Please forgive me for the crudity of the project, as it was mostly a way to learn the basics of program structure and how to generate and maintain a project.
+"Particle Simulator" is the project I developed for my Object-Oriented Languages class at AGH UST. It serves as an exercise in accurate analysis, design, and implementation of a computer program using an Object-Oriented Language, specifically C++20.
+
+This program is designed to operate on Microsoft Windows x86/x64 systems with a C++20 compiler. For compatibility with other operating systems, the SDL library must be recompiled. Note that the CMake process may not function correctly on alternative operating systems, but this can be addressed by modifying the CMakeLists files.
+
+I apologize for any shortcomings in the project's sophistication, as it primarily served as a means to grasp the fundamentals of program structure and the process of creating and maintaining a project.
