@@ -29,6 +29,7 @@ mono_crash.*
 # Build results
 [Dd]ebug/
 !./SDL2/lib/Debug/
+!./SDL2/lib/Release/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
