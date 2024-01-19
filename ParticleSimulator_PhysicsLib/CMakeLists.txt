@@ -5,7 +5,7 @@ set( PROJECT_NAME ParticleSimulator_PhysicsLib )
 
 project( ${PROJECT_NAME} )
 
-set( CMAKE_BUILD_TYPE Debug )
+#set( CMAKE_BUILD_TYPE Debug )
 #set( CMAKE_BUILD_TYPE Release )
 
 

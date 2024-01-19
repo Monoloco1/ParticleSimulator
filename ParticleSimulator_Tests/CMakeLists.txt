@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.14)
 
 project(ParticleSimulator_Tests)
 
-set( CMAKE_BUILD_TYPE Debug )
+#set( CMAKE_BUILD_TYPE Debug )
+#set( CMAKE_BUILD_TYPE Release )
 
 if( WIN32 )
 	set( CMAKE_CXX_FLAGS "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /std:c++20 /D_UNICODE /DUNICODE" )
@@ -50,7 +51,11 @@ add_executable( ${PROJECT_NAME} ${SOURCES} )
 find_library( 	PARTICLE_SIMULATOR_PHYSICS_LIB 
 		NAMES 			ParticleSimulator_PhysicsLib 
 		PATHS 			../ParticleSimulator_PhysicsLib/build_win/Debug
-					../ParticleSimulator_PhysicsLib/build_linux/Debug )
+					../ParticleSimulator_PhysicsLib/build_linux/Debug
+					../ParticleSimulator_PhysicsLib/build_mac/Debug
+					../ParticleSimulator_PhysicsLib/build_win/Release
+					../ParticleSimulator_PhysicsLib/build_linux/Release
+					../ParticleSimulator_PhysicsLib/build_mac/Release )
 					
 target_link_libraries(
 	

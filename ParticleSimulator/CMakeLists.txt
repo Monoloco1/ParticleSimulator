@@ -5,7 +5,7 @@ set( PROJECT_NAME ParticleSimulator )
 
 project( ${PROJECT_NAME} )
 
-set( CMAKE_BUILD_TYPE Debug )
+#set( CMAKE_BUILD_TYPE Debug )
 #set( CMAKE_BUILD_TYPE Release )
 
 
@@ -68,7 +68,10 @@ find_library( 	PARTICLE_SIMULATOR_PHYSICS_LIB
 		NAMES 			ParticleSimulator_PhysicsLib 
 		PATHS 			../ParticleSimulator_PhysicsLib/build_win/Debug
 					../ParticleSimulator_PhysicsLib/build_linux/Debug
-					../ParticleSimulator_PhysicsLib/build_mac/Debug )
+					../ParticleSimulator_PhysicsLib/build_mac/Debug
+					../ParticleSimulator_PhysicsLib/build_win/Release
+					../ParticleSimulator_PhysicsLib/build_linux/Release
+					../ParticleSimulator_PhysicsLib/build_mac/Release )
 
 find_package(OpenGL)
 
@@ -78,6 +81,8 @@ target_link_libraries( 	${PROJECT_NAME}
 				${PARTICLE_SIMULATOR_PHYSICS_LIB}
 				${CMAKE_SOURCE_DIR}/../SDL2/lib/Debug/SDL2.lib
 				${CMAKE_SOURCE_DIR}/../SDL2/lib/Debug/SDL2main.lib
+				${CMAKE_SOURCE_DIR}/../SDL2/lib/Release/SDL2.lib
+				${CMAKE_SOURCE_DIR}/../SDL2/lib/Release/SDL2main.lib
 				${OPENGL_gl_LIBRARY}
 		)
 
