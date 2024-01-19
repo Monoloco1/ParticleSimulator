@@ -1,7 +1,7 @@
 # ParticleSimulator
 
 
-Please use the provided .bat files to generate the project.
+Please use the provided .bat files to generate the project. The PhysicsLib library should be generated first. The ParticlaSimulator folder contains the main program, and the PaticleSimulator_Tests folder contains the tests for the PhysicsLib library.
 
 "Particle Simulator" is the project I developed for my Object-Oriented Languages class at AGH UST. It serves as an exercise in accurate analysis, design, and implementation of a computer program using an Object-Oriented Language, specifically C++20.
 
